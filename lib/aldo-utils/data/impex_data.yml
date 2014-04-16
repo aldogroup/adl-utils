@@ -1,0 +1,78 @@
+---
+- hybris_id: MegaPromoBanner
+  page_title: homepage
+  type: homepage
+  page_file: /index.html
+
+- hybris_id: 100
+  page_title: Women
+  type: landing page
+  page_file: /women/index.html
+
+- hybris_id: 200
+  page_title: Men
+  type: landing page
+  page_file: /men/index.html
+  sub_pages:
+    - hybris_id: 240
+      page_title: mr-bs-collection
+      type: category banner
+      page_file: /men/mr-bs-collection/index.html
+
+- hybris_id: 300
+  page_title: Handbags
+  type: landing page
+  page_file: /handbags/index.html
+
+- hybris_id: 400
+  page_title: Accessories
+  type: landing page
+  page_file: /accessories/index.html
+
+- hybris_id: 500
+  page_title: Sale
+  type: landing page
+  page_file: /sale/index.html
+  sub_pages:
+    - hybris_id: 510
+      page_title: women
+      type: category banner
+      page_file: /sale/women/index.html
+    - hybris_id: 520
+      page_title: men
+      type: category banner
+      page_file: /sale/men/index.html
+    - hybris_id: 534
+      page_title: handbags
+      type: category banner
+      page_file: /sale/handbags/index.html
+    - hybris_id: 530
+      page_title: accessories
+      type: category banner
+      page_file: /sale/accessories/index.html
+
+- hybris_id: 600
+  page_title: Clearance
+  type: landing page
+  page_file: /clearance/index.html
+  sub_pages:
+    - hybris_id: 611
+      page_title: Women Shoes
+      type: category banner
+      page_file: /clearance/womens-shoes/index.html
+    - hybris_id: 612
+      page_title: Women Sandals
+      type: category banner
+      page_file: /clearance/womens-sandals/index.html
+    - hybris_id: 613
+      page_title: Women Boots
+      type: category banner
+      page_file: /clearance/womens-boots/index.html
+    - hybris_id: 621
+      page_title: Men Shoes
+      type: category banner
+      page_file: /clearance/mens-shoes/index.html
+    - hybris_id: 623
+      page_title: Men Boots
+      type: category banner
+      page_file: /clearance/mens-boots/index.html
