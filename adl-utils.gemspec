@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "aldo-utils/version"
+require "adl-utils/version"
 Gem::Specification.new do |s|
-  s.name        = "aldo-utils"
-  s.version     = Middleman::ALDOUTILS::VERSION
+  s.name        = "adl-utils"
+  s.version     = Middleman::ADLUTILS::VERSION
   s.platform    = Gem::Platform::RUBY
   # s.authors     = ["Your Name"]
   # s.email       = ["email@example.com"]
   # s.homepage    = "http://example.com"
-  # s.summary     = %q{A short summary of your extension}
+  s.summary     = %q{A short summary of your extension}
   # s.description = %q{A longer description of your extension}
 
   s.files         = `git ls-files`.split("\n")
@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
 
   # Additional dependencies
   s.add_dependency("thor", [">= 0.15.2", "< 2.0"])
+  s.add_dependency("god", ['>=0.13.4'])
 end

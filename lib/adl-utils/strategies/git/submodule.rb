@@ -1,5 +1,5 @@
 module Middleman
-  module Deploy
+  module Adl_Utils
     module Strategies
       module Git
         class Submodule < Base

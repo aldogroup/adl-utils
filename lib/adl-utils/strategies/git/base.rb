@@ -1,5 +1,5 @@
 module Middleman
-  module Deploy
+  module Adl_Utils
     module Strategies
       module Git
         class Base
@@ -18,7 +18,7 @@ module Middleman
         protected
 
           def add_signature_to_commit_message(base_message)
-            signature = "#{Middleman::Deploy::PACKAGE} #{Middleman::Deploy::VERSION}"
+            signature = "#{Middleman::ADLUTILS::PACKAGE} #{Middleman::ADLUTILS::VERSION}"
             time      = "#{Time.now.utc}"
 
             "#{base_message} at #{time} by #{signature}"

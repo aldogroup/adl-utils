@@ -1,11 +1,11 @@
 # Require core library
 require 'middleman-core'
 
-require 'aldo-utils/commands'
+require 'adl-utils/commands'
 
-::Middleman::Extensions.register(:aldoutils) do
-  require "aldo-utils/extension"
-  ::Middleman::ALDOUTILS
+::Middleman::Extensions.register(:ADLUTILS) do
+  require "adl-utils/extension"
+  ::Middleman::ADLUTILS
 end
 
 # Extension namespace
