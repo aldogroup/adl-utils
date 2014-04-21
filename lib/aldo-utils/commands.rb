@@ -155,7 +155,7 @@ UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];catego
           l3_hybris_id = l3_content.match(/\d{3,}/).to_s
           unless l3_hybris_id.empty?
             l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-            append_to_file(impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\"\n", :verbose => false)
+            append_to_file(impex_file, "##{l3_hybris_page_name}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
           end
         end
         say("Finished to generate the impex file for #{locale}\nYou can find it in: #{impex_file}")
