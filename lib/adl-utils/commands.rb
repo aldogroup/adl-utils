@@ -292,7 +292,6 @@ module Middleman
         usage_path = File.join(File.dirname(__FILE__), '/data/')
         godfile_template = usage_path + 'middleman.god'
         puts set_color "== Starting Middleman with icongo settings using dev environment", :yellow
-        binding.pry
         run("god start middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
         puts set_color "== Middleman Server is running at: http://localhost:1337/", :green
       end
