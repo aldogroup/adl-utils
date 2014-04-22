@@ -253,11 +253,6 @@ module Middleman
     class Daemon < Thor
       include Thor::Actions
 
-      def self.godfile_template
-        source_paths << File.join(File.dirname(__FILE__), 'data')
-        'middleman.god'
-      end
-
       check_unknown_options!
 
       namespace :daemon
@@ -294,8 +289,11 @@ module Middleman
       protected
 
       def start_daemon
+        usage_path = File.join(File.dirname(__FILE__), '/data/')
+        godfile_template = usage_path + 'middleman.god'
         puts set_color "== Starting Middleman with icongo settings using dev environment", :yellow
-        run("god -c #{self.class.godfile_template}", {:verbose => false}) || exit(1)
+        binding.pry
+        run("god start middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
         puts set_color "== Middleman Server is running at: http://localhost:1337/", :green
       end
       def stop_daemon
