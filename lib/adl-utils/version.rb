@@ -7,6 +7,6 @@ module Middleman
     DAEMON_DESC = 'Run middleman server as a daemon'
     IMPEX_DESC = 'Generate impex files to be used with Hybris'
     RELEASE_DESC = 'Generate a release and push it on github'
-    REBUILD_DESC = '(BROKEN) Restructure the build folder to make life easier for Web Admins'
+    REBUILD_DESC = 'Restructure the build folder to make life easier for Web Admins'
   end
 end

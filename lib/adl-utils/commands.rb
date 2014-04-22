@@ -40,7 +40,9 @@ module Middleman
         revision = options['environment']
         all_locale = %w(ca_en ca_fr uk_en_UK us_en_US)
         source_root = File.dirname(__FILE__)
-        impex_data = File.read('data/impex_data.yml')
+        usage_path = File.join(File.dirname(__FILE__), '/data/')
+        impex_data_file = usage_path + 'impex_data.yml'
+        impex_data = File.read(impex_data_file)
         impex_pages = YAML.load(impex_data)
         all_locale.each do |loc|
           generate_with_locale(source_root,loc,impex_pages,revision)
@@ -305,7 +307,7 @@ module Middleman
 
     class Rebuild < Thor
       include Thor::Actions
-      include Middleman::Extensions
+
       check_unknown_options!
 
       namespace :rebuild
@@ -327,10 +329,10 @@ module Middleman
         :type => :string,
         :desc => 'version (icongo or hybris)'
 
-        def rebuild
-          build(options)
-          restructure(options)
-        end
+      def rebuild
+        build(options)
+        restructure(options)
+      end
 
       protected
 
@@ -344,12 +346,16 @@ module Middleman
 
       end
 
+      source_root ENV['MM_ROOT']
+
       def restructure(options={})
         puts "== Rebuilding"
         revision = options['environment']
         version = options['platform']
         # Set variables
+        source_root = ENV['MM_ROOT']
         build_folder  = "build"
+        work_folder = 'rebuild'
         locale_list   = %w(ca-eng ca-fre us uk)
 
         # Check to see if the build folder exists, kill if it doesn't
@@ -358,13 +364,18 @@ module Middleman
           return
         end
 
+        if Dir.exist?(work_folder)
+          FileUtils.rm_rf work_folder
+          directory(build_folder + "/#{revision}/#{version}", work_folder, {:verbose => false})
+        else
+          directory(build_folder + "/#{revision}/#{version}", work_folder, {:verbose => false})
+        end
         # Change to build > revision > version directory
-        Dir.chdir(build_folder + "/#{revision}/#{version}")
+        Dir.chdir(work_folder)
         # Grab the list of directories depending on the revision
         # and version that was passed to this method, remove assets folder
         directory_list = Dir.glob("*").select { |fn| File.directory?(fn) }
         directory_list = directory_list.reject { |fn| fn == 'assets' }
-
 
         # Delete the sitemap file
         if File.exists?('index.html')
@@ -374,58 +385,56 @@ module Middleman
         # Loop through all locales folders
         directory_list.each do |folder|
 
-          # Check to see if there are any folders that
-          # don't match locales and skip them if so
-          # unless locale_list.include?(folder) and
-          #   puts "== Skipping the '#{folder}' folder"
-          #   next
-          # end
-
           # Switch into the current locale directory
-          Dir.chdir(folder)
-
-          # require File.expand_path('index.html')
-          File.rename('index.html', 'homepage_' + folder + '.html')
+          locale_folder = File.join(source_root, work_folder + '/' + folder)
+          Dir.chdir(locale_folder)
+          homepage_file = File.join(Dir.getwd, Dir.glob('*.html'))
+          copy_file homepage_file, work_folder + '/homepage_' + folder + '.html'
           page_folders = Dir.glob("*").select { |fn| File.directory?(fn) }
           # Loop over each page folder
           page_folders.each do |page|
 
             # Search for the index.html file
-            Dir.glob(page + "*").each do |f|
+            page_folder = File.join(locale_folder,page)
+            Dir.chdir(page_folder)
+            Dir.glob("*").each do |f|
               if [".", ".."].include?(f)
                 next
               end
-              binding.pry
-
-              if File.directory?(f)
-                Dir.glob(f + '**/*.html').each do |sf|
-                  new_filename = sf.gsub('/', '-').gsub('index.html', '') + '_' + folder + '.html'
-                  puts new_filename
-                  puts sf
-                  File.rename(sf, new_filename)
-                  # copy_file sf, new_filename
+              current_dir = Dir.glob('*')
+              if current_dir.length > 1
+                current_dir.each do |sf|
+                  if File.extname(sf) == '.html'
+                    new_filename = work_folder + '/' + page + '_' + folder + '.html'
+                    sf = work_folder + '/' + folder + '/' + sf
+                    copy_file sf, new_filename
+                  else
+                    Dir.chdir(File.join(page_folder, sf))
+                    current_file = File.join(Dir.getwd, Dir.glob('*'))
+                    new_filename = work_folder + '/' + page + '-' + sf + '_' + folder  + '.html'
+                    copy_file current_file, new_filename
+                  end
                 end
               else
-                new_filename = f + '_' + folder + '.html'
-                #copy_file f, new_filename
-                File.rename(f, new_filename)
+                current_file = File.join(Dir.getwd, Dir.glob('*'))
+                new_filename = work_folder + '/' + page + '_' + folder + '.html'
+                copy_file current_file, new_filename
               end
 
-
-              # puts new_filename
-              #
-              # # Rename the file into current locale directory
-              # File.rename(f, new_filename + File.extname(f))
             end
-
-            # Delete page folder
-            FileUtils.rm_rf page
 
           end
 
           # Go back to list of locales
           Dir.chdir("..")
 
+        end
+
+        #Cleanup folders
+        Dir.chdir(File.join(source_root, work_folder))
+        directory_list.each do |rfolder|
+          trash_folder = File.join(source_root, work_folder + '/' + rfolder)
+          remove_dir trash_folder
         end
 
         puts "== Done"
