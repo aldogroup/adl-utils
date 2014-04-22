@@ -1,5 +1,5 @@
 require "middleman-core/cli"
-require 'god'
+require 'pry'
 require 'adl-utils/methods/git'
 require 'adl-utils/strategies'
 require 'adl-utils/version'
@@ -103,13 +103,15 @@ module Middleman
           end
           # Generate the rest of the content
           append_to_file impex_file, :verbose => false do
-            "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n"
+            "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog
+    $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+    UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n"
           end
           if impex_page['type'] == 'landing page'
-            append_to_file(impex_file, "##{impex_page['page_title']}\n;;#{impex_page['hybris_id']};\"#{content_page}\";\"\";\n", :verbose => false)
+            append_to_file(impex_file, "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";\"#{content_page}\";\"\";\n", :verbose => false)
           end
           if impex_page['type'] == 'category banner'
-            append_to_file(impex_file, "##{impex_page['page_title']}\n;;#{impex_page['hybris_id']};;\"#{content_page}\"\n", :verbose => false)
+            append_to_file(impex_file, "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";;\"#{content_page}\"\n", :verbose => false)
           end
 
           if impex_page.include?("sub_pages")
@@ -121,11 +123,11 @@ module Middleman
 
               if sub_page['type'] == 'landing page'
                 say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
-                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\";\"\";\n", :verbose => false)
+                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\";\"\";\n", :verbose => false)
               elsif sub_page['type'] == 'category banner'
-                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};;\"#{sub_content_page}\"\n", :verbose => false)
+                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;\"#{sub_content_page}\"\n", :verbose => false)
               else
-                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\"\n", :verbose => false)
+                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\"\n", :verbose => false)
               end # End of check for page type inside sub_pages
 
             end # End of sub_pages generator loop
@@ -133,6 +135,7 @@ module Middleman
           end # End of sub_pages conditional check
 
         end # End of impex_pages loop
+
 
         # =>  Setup the working directory
         l3_build_dir = build_dir + '/l3'
@@ -145,7 +148,7 @@ module Middleman
           l3_hybris_id = l3_content.match(/\d{3,}/).to_s
           unless l3_hybris_id.empty?
             l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-            append_to_file(impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\"\n", :verbose => false)
+            append_to_file(impex_file, "##{l3_hybris_page_name}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
           end
         end
         say("Finished to generate the impex file for #{locale}\nYou can find it in: #{impex_file}")
@@ -242,128 +245,70 @@ module Middleman
         description_raw = ask("Please type a description: ")
         description = description_raw.gsub(/\n/,'"\0"')
         run(`git tag -a v#{release_version} -m "#{description}"`)
-        # run("git tag v#{release_version} -m #{description}")
-        # run('git push origin master')
         run("git push origin v#{release_version}")
-        # server_instance   = ::Middleman::Application.server.inst
-        #
-        # camelized_method  = self.deploy_options.method.to_s.split('_').map { |word| word.capitalize}.join
-        # method_class_name = "Middleman::ADLUTILS::Methods::#{camelized_method}"
-        # method_instance   = method_class_name.constantize.new(server_instance, self.deploy_options)
-        #
-        # method_instance.process
       end
 
     end
 
-    # class Daemon < Thor < God
-    #   include Thor::Actions
-    #   include God::CLI
-    #
-    #   check_unknown_options!
-    #
-    #   namespace :daemon
-    #
-    #   def self.exit_on_failure?
-    #     true
-    #   end
-    #
-    #   desc "daemon [options]", Middleman::ADLUTILS::DAEMON_DESC
-    #   method_option 'port',
-    #     :aliases => '-p',
-    #     :type => :numeric,
-    #     :default => 1337,
-    #     :desc => 'Set a custom port'
-    #   method_option 'stop',
-    #     :type => :boolean,
-    #     :default => false,
-    #     :desc => "stop the daemon"
-    #   method_option 'restart',
-    #     :type => :boolean,
-    #     :default => false,
-    #     :desc => "restart the daemon"
-    #   def daemon
-    #     if options['stop']
-    #       stop
-    #     end
-    #     if options['restart']
-    #       restart
-    #     end
-    #     god run_as_daemon(options)
-    #   end
-    #
-    #   # def stop
-    #   #   stop_daemon
-    #   # end
-    #   # desc "daemon restart",
-    #   # def restart
-    #   #   restart_daemon
-    #   # end
-    #
-    #   protected
-    #
-    #   def run_as_daemon(options={})
-    #     port = options['port']
-    #     project_root = ENV['MM_ROOT']
-    #     God.pid_file_directory = project_root + "/.god"
-    #
-    #     %w{4567}.each do |port|
-    #       God.watch do |w|
-    #         w.dir = project_root
-    #         w.log = project_root + "/.god/middleman.log"
-    #         w.name = "middleman"
-    #
-    #         w.interval = 30.seconds
-    #
-    #         w.start = "middleman server --port=#{port} --verbose"
-    #         w.stop = "killall -9 middleman"
-    #         w.restart = "killall -9 middleman | middleman server --port=#{port} --verbose"
-    #
-    #         w.behavior(:clean_pid_file)
-    #
-    #         w.start_if do |start|
-    #           start.condition(:process_running) do |c|
-    #             c.interval = 5.seconds
-    #             c.running = false
-    #           end
-    #         end
-    #
-    #         w.restart_if do |restart|
-    #           restart.condition(:memory_usage) do |c|
-    #             c.above = 150.megabytes
-    #             c.times = [3, 5] # 3 out of 5 intervals
-    #           end
-    #
-    #           restart.condition(:cpu_usage) do |c|
-    #             c.above = 50.percent
-    #             c.times = 5
-    #           end
-    #         end
-    #
-    #         # lifecycle
-    #         w.lifecycle do |on|
-    #           on.condition(:flapping) do |c|
-    #             c.to_state = [:start, :restart]
-    #             c.times = 5
-    #             c.within = 5.minute
-    #             c.transition = :unmonitored
-    #             c.retry_in = 10.minutes
-    #             c.retry_times = 5
-    #             c.retry_within = 2.hours
-    #           end
-    #         end
-    #       end
-    #     end
-    #   end
-    #   def stop_daemon
-    #   end
-    #   def restart_daemon
-    #   end
-    # end
+    class Daemon < Thor
+      include Thor::Actions
+
+      def self.godfile_template
+        source_paths << File.join(File.dirname(__FILE__), 'data')
+        'middleman.god'
+      end
+
+      check_unknown_options!
+
+      namespace :daemon
+
+      def self.exit_on_failure?
+        true
+      end
+
+      desc "daemon [options]", Middleman::ADLUTILS::DAEMON_DESC
+      method_option 'start',
+        :type => :boolean,
+        :default => false,
+        :desc => 'Start middleman as daemon'
+      method_option 'stop',
+        :type => :boolean,
+        :default => false,
+        :desc => "stop the daemon"
+      method_option 'restart',
+        :type => :boolean,
+        :default => false,
+        :desc => "restart the daemon"
+      def daemon
+        if options['stop']
+          stop_daemon
+        elsif options['restart']
+          restart_daemon
+        elsif options['start']
+          start_daemon
+        else
+          puts set_color "== You need to specify an option to run middleman as daemon.\nPlease use: middleman daemon --help", :red
+        end
+      end
+
+      protected
+
+      def start_daemon
+        puts set_color "== Starting Middleman with icongo settings using dev environment", :yellow
+        run("god -c #{self.class.godfile_template}", {:verbose => false}) || exit(1)
+        puts set_color "== Middleman Server is running at: http://localhost:1337/", :green
+      end
+      def stop_daemon
+        run("god stop middleman", {:verbose => false}) || exit(1)
+      end
+      def restart_daemon
+        run("god restart middleman", {:verbose => false}) || exit(1)
+      end
+    end
 
     class Rebuild < Thor
       include Thor::Actions
-
+      include Middleman::Extensions
       check_unknown_options!
 
       namespace :rebuild
@@ -399,22 +344,16 @@ module Middleman
           version = options['platform']
           run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
         end
+
       end
 
       def restructure(options={})
         puts "== Rebuilding"
-        # Set variables
         revision = options['environment']
         version = options['platform']
-        source_root = ENV['MM_ROOT']
-        Dir.chdir(source_root)
+        # Set variables
         build_folder  = "build"
-        build_dir = Pathname.new(build_folder + "/#{revision}/#{version}")
-        if version == 'icongo'
-          locale_list   = %w(ca-eng ca-fre us uk)
-        else
-          locale_list = %w(ca_en ca_fr us_en_US uk_en_UK)
-        end
+        locale_list   = %w(ca-eng ca-fre us uk)
 
         # Check to see if the build folder exists, kill if it doesn't
         unless File.directory?(build_folder)
@@ -423,11 +362,12 @@ module Middleman
         end
 
         # Change to build > revision > version directory
-        Dir.chdir(build_dir)
-
+        Dir.chdir(build_folder + "/#{revision}/#{version}")
         # Grab the list of directories depending on the revision
         # and version that was passed to this method, remove assets folder
-        directory_list = Dir.glob("**").select { |fn| File.directory?(fn) }
+        directory_list = Dir.glob("*").select { |fn| File.directory?(fn) }
+        directory_list = directory_list.reject { |fn| fn == 'assets' }
+
 
         # Delete the sitemap file
         if File.exists?('index.html')
@@ -439,27 +379,46 @@ module Middleman
 
           # Check to see if there are any folders that
           # don't match locales and skip them if so
-          unless locale_list.include?(folder)
-            puts "== Skipping the '#{folder}' folder"
-            next
-          end
+          # unless locale_list.include?(folder) and
+          #   puts "== Skipping the '#{folder}' folder"
+          #   next
+          # end
 
           # Switch into the current locale directory
           Dir.chdir(folder)
 
-          page_folders = Dir.glob("**/*/").select { |fn| File.directory?(fn) }
-
+          # require File.expand_path('index.html')
+          File.rename('index.html', 'homepage_' + folder + '.html')
+          page_folders = Dir.glob("*").select { |fn| File.directory?(fn) }
           # Loop over each page folder
           page_folders.each do |page|
 
             # Search for the index.html file
-            Dir.glob(page + "/*.html").each do |f|
+            Dir.glob(page + "*").each do |f|
               if [".", ".."].include?(f)
                 next
               end
+              binding.pry
 
-              # Rename the file into current locale directory
-              File.rename(f, page + File.extname(f))
+              if File.directory?(f)
+                Dir.glob(f + '**/*.html').each do |sf|
+                  new_filename = sf.gsub('/', '-').gsub('index.html', '') + '_' + folder + '.html'
+                  puts new_filename
+                  puts sf
+                  File.rename(sf, new_filename)
+                  # copy_file sf, new_filename
+                end
+              else
+                new_filename = f + '_' + folder + '.html'
+                #copy_file f, new_filename
+                File.rename(f, new_filename)
+              end
+
+
+              # puts new_filename
+              #
+              # # Rename the file into current locale directory
+              # File.rename(f, new_filename + File.extname(f))
             end
 
             # Delete page folder

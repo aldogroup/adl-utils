@@ -5,11 +5,11 @@ Gem::Specification.new do |s|
   s.name        = "adl-utils"
   s.version     = Middleman::ADLUTILS::VERSION
   s.platform    = Gem::Platform::RUBY
-  # s.authors     = ["Your Name"]
+  s.authors     = ["ALDO DIGITAL LAB"]
   # s.email       = ["email@example.com"]
   # s.homepage    = "http://example.com"
   s.summary     = %q{A short summary of your extension}
-  # s.description = %q{A longer description of your extension}
+  s.description = %q{A longer description of your extension}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
