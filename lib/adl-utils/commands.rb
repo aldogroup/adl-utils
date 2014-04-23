@@ -441,5 +441,134 @@ module Middleman
       end
     end
 
+    class Akamai_Sync < Thor
+      include Thor::Actions
+
+      check_unknown_options!
+
+      namespace :akamai_sync
+
+      # Tell Thor to exit with a nonzero exit code on failure
+      def self.exit_on_failure?
+        true
+      end
+
+      desc "akamai_sync [options]", Middleman::ADLUTILS::AKAMAI_DESC
+      method_option "build_before",
+          :type     => :boolean,
+          :aliases  => "-b",
+          :desc     => "Run `middleman build` before creating the release"
+        method_option 'environment',
+          :default => 'dev',
+          :aliases => '-e',
+          :type     => :string,
+          :desc     => "Specify environment for the release(Default: dev)"
+        method_option 'platform',
+          :aliases => "-p",
+          :default => 'icongo',
+          :type => :string,
+          :desc => 'version (icongo or hybris)'
+      def akamai_sync
+        build_before(options)
+        FtpConfig.process(options)
+      end
+
+      protected
+
+      def build_before(options={})
+        build_enabled = options['build_before']
+        if build_enabled
+          # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
+          revision = options['environment']
+          version = options['platform']
+          run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
+        end
+      end
+
+      class FtpConfig < Middleman::Extension
+        require 'middleman-core'
+        require 'net/ftp'
+        def initialize(app, options_hash={}, &block)
+          # Call super to build options from the options_hash
+          super
+        end
+
+        def self.filtered_files
+          files = Dir.glob('**/*', File::FNM_DOTMATCH)
+
+          files.reject { |filename| filename =~ Regexp.new('\.$') }
+        end
+
+
+        def self.process(options={})
+          extend Middleman
+
+          mm = ::Middleman::Application.server.inst do
+            ENV['REV'] = options['environment']
+            config[:environment] = :build
+          end
+
+          username = mm.data.credentials.ftp.username
+          password = mm.data.credentials.ftp.password
+
+          assets_dir = mm.config.build_dir.to_s + '/assets'
+          upload_dir = "/76465/#{mm.config.banner_simple}/content/#{mm.config.season}/#{mm.config.campaign}/#{mm.config.revision}"
+          ftp = Net::FTP.new('aldo.upload.akamai.com')
+          ftp.login(username, password)
+          ftp.chdir(upload_dir)
+          ftp.passive = true
+          ftp
+          dir_list = ftp.ls
+          if dir_list.include?('assets')
+            ftp.chdir('assets')
+          else
+            ftp.mkdir('assets')
+            puts "Created assets directory"
+            ftp.chdir('assets')
+          end
+          Dir.chdir(assets_dir) do
+            self.filtered_files.each do |filename|
+              if File.directory?(filename)
+                self.upload_directory(ftp, filename)
+              else
+                self.upload_binary(ftp, filename)
+              end
+            end
+          end
+        end
+
+        def self.handle_exception(exception, ftp, filename)
+          reply     = exception.message
+          err_code  = reply[0,3].to_i
+
+          if err_code == 550
+            if File.binary?(filename)
+              ftp.putbinaryfile(filename, filename)
+            else
+              ftp.puttextfile(filename, filename)
+            end
+          end
+        end
+
+        def self.upload_binary(ftp, filename)
+          begin
+            ftp.putbinaryfile(filename, filename)
+          rescue Exception => exception
+            self.handle_exception(exception, ftp, filename)
+          end
+
+          puts "Copied #{filename}"
+        end
+
+        def self.upload_directory(ftp, filename)
+          begin
+            ftp.mkdir(filename)
+            puts "Created directory #{filename}"
+          rescue
+          end
+        end
+
+      end
+    end
   end
 end
