@@ -512,13 +512,37 @@ module Middleman
           password = mm.data.credentials.ftp.password
 
           assets_dir = mm.config.build_dir.to_s + '/assets'
-          upload_dir = "/76465/#{mm.config.banner_simple}/content/#{mm.config.season}/#{mm.config.campaign}/#{mm.config.revision}"
+          upload_dir = "/76465/#{mm.config.banner_simple}/content/"
           ftp = Net::FTP.new('aldo.upload.akamai.com')
           ftp.login(username, password)
           ftp.chdir(upload_dir)
           ftp.passive = true
           ftp
           dir_list = ftp.ls
+          if dir_list.include?(mm.config.season)
+            ftp.chdir(mm.config.season)
+          else
+            ftp.mkdir(mm.config.season)
+            puts "Created #{mm.config.season} directory"
+            ftp.chdir(mm.config.season)
+          end
+          dir_list
+          if dir_list.include?(mm.config.campaign)
+            ftp.chdir(mm.config.campaign)
+          else
+            ftp.mkdir(mm.config.campaign)
+            puts "Created #{mm.config.campaign} directory"
+            ftp.chdir(mm.config.campaign)
+          end
+          dir_list
+          if dir_list.include?(mm.config.revision)
+            ftp.chdir(mm.config.revision)
+          else
+            ftp.mkdir(mm.config.revision)
+            puts "Created #{mm.config.revision} directory"
+            ftp.chdir(mm.config.revision)
+          end
+          dir_list
           if dir_list.include?('assets')
             ftp.chdir('assets')
           else
