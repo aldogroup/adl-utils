@@ -511,46 +511,32 @@ module Middleman
           username = mm.data.credentials.ftp.username
           password = mm.data.credentials.ftp.password
 
-          assets_dir = mm.config.build_dir.to_s + '/assets'
-          upload_dir = "/76465/#{mm.config.banner_simple}/content/"
+          local_assets_dir = mm.config.assets_dir
+          remote_dir = mm.config.ftp_path.split("/")
           ftp = Net::FTP.new('aldo.upload.akamai.com')
           ftp.login(username, password)
-          ftp.chdir(upload_dir)
           ftp.passive = true
           ftp
-          dir_list = ftp.ls
-          if dir_list.include?(mm.config.season)
-            ftp.chdir(mm.config.season)
-          else
-            ftp.mkdir(mm.config.season)
-            puts "Created #{mm.config.season} directory"
-            ftp.chdir(mm.config.season)
+
+          remote_dir = remote_dir.reject { |fn| fn == '' }
+          binding.pry
+          remote_dir.each do |dir|
+            begin
+              ftp.chdir(dir)
+              puts "Switched to #{dir}"
+            rescue Exception => exception
+              self.handle_dir_exception(exception, ftp, dir)
+            end
           end
-          dir_list
-          if dir_list.include?(mm.config.campaign)
-            ftp.chdir(mm.config.campaign)
-          else
-            ftp.mkdir(mm.config.campaign)
-            puts "Created #{mm.config.campaign} directory"
-            ftp.chdir(mm.config.campaign)
-          end
-          dir_list
-          if dir_list.include?(mm.config.revision)
-            ftp.chdir(mm.config.revision)
-          else
-            ftp.mkdir(mm.config.revision)
-            puts "Created #{mm.config.revision} directory"
-            ftp.chdir(mm.config.revision)
-          end
-          dir_list
-          if dir_list.include?('assets')
+
+          begin
             ftp.chdir('assets')
-          else
-            ftp.mkdir('assets')
-            puts "Created assets directory"
-            ftp.chdir('assets')
+            puts "Switched to assets"
+          rescue Exception => exception
+            self.handle_dir_exception(exception, ftp, 'assets')
           end
-          Dir.chdir(assets_dir) do
+
+          Dir.chdir(local_assets_dir) do
             self.filtered_files.each do |filename|
               if File.directory?(filename)
                 self.upload_directory(ftp, filename)
@@ -558,6 +544,16 @@ module Middleman
                 self.upload_binary(ftp, filename)
               end
             end
+          end
+        end
+
+        def self.handle_dir_exception(exception, ftp, dirname)
+          reply     = exception.message
+          err_code  = reply[0,3].to_i
+          if err_code == 550
+            ftp.mkdir(dirname)
+            puts "Created #{dirname} directory"
+            ftp.chdir(dirname)
           end
         end
 
