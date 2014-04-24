@@ -476,9 +476,7 @@ module Middleman
       protected
 
       def build_before(options={})
-        build_enabled = options['build_before']
-        if build_enabled
-          # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
+        if yes?("== Do you want to build your project first ?")
           revision = options['environment']
           version = options['platform']
           run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
@@ -519,7 +517,6 @@ module Middleman
           ftp
 
           remote_dir = remote_dir.reject { |fn| fn == '' }
-          binding.pry
           remote_dir.each do |dir|
             begin
               ftp.chdir(dir)
