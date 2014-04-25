@@ -1,5 +1,5 @@
 module Middleman
-  module Deploy
+  module ADLUTILS
     module Methods
       class Base
         attr_reader :options, :server_instance

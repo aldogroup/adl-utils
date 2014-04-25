@@ -2,7 +2,7 @@ require 'net/ftp'
 require 'ptools'
 
 module Middleman
-  module Deploy
+  module ADLUTILS
     module Methods
       class Ftp < Base
 
@@ -27,7 +27,7 @@ module Middleman
             filtered_files.each do |filename|
               if File.directory?(filename)
                 upload_directory(ftp, filename)
-              else 
+              else
                 upload_binary(ftp, filename)
               end
             end
@@ -83,7 +83,7 @@ module Middleman
           rescue
           end
         end
-        
+
 
       end
     end

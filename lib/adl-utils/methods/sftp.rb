@@ -2,7 +2,7 @@ require 'net/sftp'
 require 'ptools'
 
 module Middleman
-  module Deploy
+  module ADLUTILS
     module Methods
       class Sftp < Ftp
 
@@ -62,4 +62,3 @@ module Middleman
     end
   end
 end
-
