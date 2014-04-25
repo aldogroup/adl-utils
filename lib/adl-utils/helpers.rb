@@ -58,7 +58,10 @@ module Middleman
             return link
           end
         end
-        
+
+        def run_build
+          run("middleman build --clean") || exit(1)
+        end
       end
     end
   end
