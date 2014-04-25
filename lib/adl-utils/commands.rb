@@ -1,7 +1,7 @@
 require "middleman-core/cli"
 require 'pry'
-require 'adl-utils/methods/git'
-require 'adl-utils/strategies'
+# require 'adl-utils/methods/git'
+# require 'adl-utils/strategies'
 require 'adl-utils/version'
 
 module Middleman
