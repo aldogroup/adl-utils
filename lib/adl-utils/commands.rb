@@ -1,7 +1,7 @@
 require "middleman-core/cli"
 require 'pry'
-require 'adl-utils/methods/git'
-require 'adl-utils/strategies'
+# require 'adl-utils/methods/git'
+# require 'adl-utils/strategies'
 require 'adl-utils/version'
 
 module Middleman
@@ -136,6 +136,18 @@ module Middleman
 
           end # End of sub_pages conditional check
 
+          head_content_path = File.join(build_dir, '/head.html')
+          head_content = File.read(head_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+          say("Generating head template...", :yellow)
+          append_to_file impex_file, :verbose => false do
+            "\n# Header Component\n;;HTMLHeaderComponent;\"#{head_content}\"\n"
+          end
+          footer_content_path = File.join(build_dir, '/footer.html')
+          footer_content = File.read(footer_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+          say("Generating footer template...", :yellow)
+          append_to_file impex_file, :verbose => false do
+            "\n# Footer Component\n;;HTMLFooterComponent;\"#{footer_content}\"\n"
+          end
         end # End of impex_pages loop
 
 

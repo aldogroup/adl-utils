@@ -1,5 +1,5 @@
 module Middleman
-  module Deploy
+  module ADLUTILS
     module Methods
       class Rsync < Base
 
