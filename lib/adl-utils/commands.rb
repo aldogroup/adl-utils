@@ -103,7 +103,7 @@ module Middleman
               "\n# Homepage \nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]\n;;#{impex_page['hybris_id']};\"#{content_page}\"\n"
             end
           end
-          
+
           head_content_path = File.join(build_dir, '/head.html')
           head_content = File.read(head_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
           say("Generating head template...", :yellow)
@@ -116,7 +116,7 @@ module Middleman
           append_to_file impex_file, :verbose => false do
             "\n# Footer Component\n;;HTMLFooterComponent;\"#{footer_content}\"\n"
           end
-          
+
           # Generate the rest of the content
           append_to_file impex_file, :verbose => false do
             "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog
@@ -311,11 +311,13 @@ module Middleman
         run("god start middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
         puts set_color "== Middleman Server is running at: http://localhost:1337/", :green
       end
+
       def stop_daemon
-        run("god stop middleman", {:verbose => false}) || exit(1)
+        run("god stop middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
       end
+
       def restart_daemon
-        run("god restart middleman", {:verbose => false}) || exit(1)
+        run("god restart middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
       end
     end
 
