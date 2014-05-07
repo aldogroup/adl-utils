@@ -119,6 +119,7 @@ Helps to specify country specific logic using conditionals.
 - CA: `is_ca`
 - CA-ENG: `is_ca('en')`
 - CA-FRE: `is_ca('fr')`
+- UK: `is_uk`
 
 For instance, if we want to include a module that is going to only be showcased on the US website, in our slim template, do this:
 
