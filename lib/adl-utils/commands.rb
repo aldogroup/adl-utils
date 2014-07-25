@@ -179,9 +179,7 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
             end
 
             insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
-              "\n##{impex_page['page_title']}\n"
-              ";#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
-              ";;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n\n"
+              "\n##{impex_page['page_title']}\n\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n\n;;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n\n"
             end
 
             if impex_page.include?("sub_pages")
