@@ -131,9 +131,10 @@ module Middleman
         end
 
         #campaign_start = DateTime.parse(mm_campaign_start[country_code][0] mm_campaign_start[country_code][1]).strftime('%d.%m.%Y %H:%M:%S')
-        campaign_end = (Date.parse(campaign_start).end_of_month).strftime('%d.%m.%Y %H:%M:%S')
-        previous_campaign_start = (Date.parse(campaign_start) - 10).strftime('%d.%m.%Y %H:%M:%S')
-        previous_campaign_end = (Date.parse(campaign_start) - ((0.01 / 24)/36)).strftime('%d.%m.%Y %H:%M:%S')
+        campaign_end = (DateTime.parse(campaign_start).end_of_month).strftime('%d.%m.%Y %H:%M:%S')
+        previous_campaign_start = (DateTime.parse(campaign_start) - 10).strftime('%d.%m.%Y %H:%M:%S')
+        previous_campaign_end = (DateTime.parse(campaign_start) - ((0.01 / 24)/36)).strftime('%d.%m.%Y %H:%M:%S')
+        # binding.pry
 
 
         append_to_file impex_content_file, :verbose => false do
@@ -179,7 +180,7 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
             end
 
             insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
-              "\n##{impex_page['page_title']}\n\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n\n;;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n\n"
+              "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n\n"
             end
 
             if impex_page.include?("sub_pages")
@@ -190,14 +191,11 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
                 # say("Reading & Generating #{impex_page['page_title']} #{sub_page['page_title']}", :yellow)
 
                   insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
-                    "\n##{sub_page['page_title']}\n"
-                    ";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;#{sub_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
-                    ";;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;#{sub_page['type']};#{campaign_start};#{campaign_end};\"#{sub_content_page}\"\n\n"
+                    "\n##{sub_page['page_title']}\n;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;#{sub_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;#{sub_page['type']};#{campaign_start};#{campaign_end};\"#{sub_content_page}\"\n\n"
                   end
 
                   insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                    "\n##{sub_page['page_title']}\n"
-                    ";;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                    "\n##{sub_page['page_title']}\n\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
                   end
 
               end # End of sub_pages generator loop

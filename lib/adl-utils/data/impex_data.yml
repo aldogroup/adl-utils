@@ -35,19 +35,19 @@
   page_file: /sale/index.html
   sub_pages:
     - hybris_id: 510
-      page_title: women
+      page_title: Sale Women
       type: CATEGORY_BANNER
       page_file: /sale/women/index.html
     - hybris_id: 520
-      page_title: men
+      page_title: Sale Men
       type: CATEGORY_BANNER
       page_file: /sale/men/index.html
     - hybris_id: 534
-      page_title: handbags
+      page_title: Sale Handbags
       type: CATEGORY_BANNER
       page_file: /sale/handbags/index.html
     - hybris_id: 530
-      page_title: accessories
+      page_title: Sale Accessories
       type: CATEGORY_BANNER
       page_file: /sale/accessories/index.html
 
