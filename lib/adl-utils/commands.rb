@@ -3,6 +3,7 @@ require 'pry'
 # require 'adl-utils/methods/git'
 # require 'adl-utils/strategies'
 require 'adl-utils/version'
+require 'expanded_date'
 
 module Middleman
   module Cli
@@ -19,56 +20,88 @@ module Middleman
         true
       end
 
-      desc "impex [options]", Middleman::ADLUTILS::IMPEX_DESC
-      method_option "build_before",
-        :type     => :boolean,
-        :aliases  => "-b",
-        :desc     => "Run `middleman build` before generating impex files"
-      method_option 'environment',
-        :default => 'dev',
-        :aliases => '-e',
-        :type     => :string,
-        :desc     => "Specify environment for generating impex files(Default: dev)"
+      desc "impex", Middleman::ADLUTILS::IMPEX_DESC
+
       def impex
-        build_before(options)
-        generate(options)
+        build_before()
+        mm_var()
       end
 
       protected
 
-      def generate(options={})
-        revision = options['environment']
-        all_locale = %w(ca_en ca_fr uk_en_UK us_en_US)
-        source_root = File.dirname(__FILE__)
-        usage_path = File.join(File.dirname(__FILE__), '/data/')
-        impex_data_file = usage_path + 'impex_data.yml'
-        impex_data = File.read(impex_data_file)
-        impex_pages = YAML.load(impex_data)
-        all_locale.each do |loc|
-          generate_with_locale(source_root,loc,impex_pages,revision)
+      def mm_var
+        extend Middleman
+
+        mm = ::Middleman::Application.server.inst do
+          config[:environment] = :build
         end
+
+        mm_config = {
+          'season' => mm.config.season,
+          'campaign' => mm.config.campaign,
+          'week' => mm.config.campaign.upcase.gsub(/[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/,''),
+          'previous_campaign' => mm.config.previous_campaign.upcase.gsub(/[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/,''),
+          'campaign_start' => mm.config.campaign_start
+        }
+
+        generate(mm_config)
       end
 
-      def build_before(options={})
-        build_enabled = options['build_before']
-        if build_enabled
+      def generate(mm_config={})
+        impexer_config = {
+          'revision' => ENV['REV'],
+          'locales' => %w(ca_en ca_fr uk_en_UK us_en_US),
+          'source_root' => File.dirname(__FILE__),
+          'usage_path' => File.join(File.dirname(__FILE__), '/data/'),
+          'impex_data_file' => File.join(File.dirname(__FILE__), '/data/') + 'impex_data.yml',
+          'impex_data' => File.read(File.join(File.dirname(__FILE__), '/data/') + 'impex_data.yml'),
+          'impex_pages' => YAML.load(File.read(File.join(File.dirname(__FILE__), '/data/') + 'impex_data.yml'))
+        }
+
+        generate_config(mm_config)
+        # binding.pry
+        impexer_config['locales'].each do |loc|
+          generate_content(mm_config,impexer_config,loc)
+        end
+
+      end
+
+      def build_before
+        if yes?("== Do you want to build your project first ?")
           # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
-          run("VER=hybris REV=#{options['environment']} middleman build --clean") || exit(1)
+          run("VER=hybris REV=#{ENV['REV']} middleman build --clean") || exit(1)
         end
       end
 
-      def generate_with_locale(source_root,locale,impex_pages,revision)
+      def generate_config(mm_config={})
+        create_file "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_config.impex", :verbose => false
+        impex_config_file = "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_config.impex"
+        say("\n░▒▓ Starting ImpEx Builder Tool ▓▒░\n", :green)
+        say("\n══ Generating impex config file", :green)
+        append_to_file impex_config_file, :verbose => false do
+          "\n####################################################\n#                    WCMS CONFIG                   #\n####################################################\n\n#### DO NOT MODIFY ####\n# Macros / Replacement Parameter definitions\n$contentCatalog=aldoCommerceContentCatalog\n$caProductCatalog=caAldoProductCatalog\n$ukProductCatalog=ukAldoProductCatalog\n$usProductCatalog=usAldoProductCatalog\n\n$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]\n$caProductCV=catalogVersion(catalog(id[default=$caProductCatalog]),version[default='Staged'])[unique=true,default=$caProductCatalog:Staged]\n$ukProductCV=catalogVersion(catalog(id[default=$ukProductCatalog]),version[default='Staged'])[unique=true,default=$ukProductCatalog:Staged]\n$usProductCV=catalogVersion(catalog(id[default=$usProductCatalog]),version[default='Staged'])[unique=true,default=$usProductCatalog:Staged]\n$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n\n# CMS Footer Component (ignore this but leave it in the file for now)\nINSERT_UPDATE FooterComponent;$contentCV[unique=true];uid[unique=true];wrapAfter;&componentRef;name;navigationNodes(&nodeRef)\n;;FooterComponent;2;FooterComponent;Footer Component\n\n#### END DO NOT MODIFY ####\n\n#### CREATE COMPONENTS FOR HOME PAGE (header, content & footer) ####\n# CMS Paragraph Components\nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef\n;;HomepageComponent#{mm_config['week']};Home Page Component for #{mm_config['week']};HomepageComponent#{mm_config['week']};\n;;HTMLHeaderComponent#{mm_config['week']};HTML Header Component for #{mm_config['week']};HTMLHeaderComponent#{mm_config['week']};\n;;HTMLFooterComponent#{mm_config['week']};HTML Footer Component for #{mm_config['week']};HTMLFooterComponent#{mm_config['week']};\n\n\n#### ADD THE ABOVE COMPONENTS TO THE RIGHT HOME PAGE PLACEHOLDERS ####\n# Once you create the new paragraph component above, add it to the component list separated by a comma like I did with MegaPromoBanner2 below\nINSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)\n;;HTMLHeaderSlot;HTML Header Slot;true;HTMLHeaderComponent#{mm_config['week']};\n;;FooterSlot;Footer;true;FooterComponent,HTMLFooterComponent#{mm_config['week']};\n;;Section1Slot-Homepage;Section1 Slot for Homepage;true;HomepageComponent#{mm_config['week']};"
+        end
+
+
+
+      end
+
+      def generate_content(mm_config={},impexer_config={},locale)
         # Dir.chdir(ENV['MM_ROOT'])
-        FileUtils.rm("build/impex/#{locale}.impex") if options[:force]
-        create_file "build/impex/#{locale}.impex", :verbose => false
-        impex_file = "build/impex/#{locale}.impex"
+        FileUtils.rm("build/impex/#{ENV['REV']}/#{locale}.impex") if options[:force]
+
+        create_file "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_#{locale}.impex", :verbose => false
+        impex_content_file = "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_#{locale}.impex"
 
         # =>  Setup the working directory
-        build_dir = Pathname.new("build/#{revision}/hybris/" + locale)
+        build_dir = Pathname.new("build/#{impexer_config['revision']}/hybris/" + locale)
 
         # =>  Setup locale & country_code for impex file generation
+        mm_campaign_start = mm_config['campaign_start']
         if locale == 'ca_en' || locale == 'ca_fr'
           country_code = 'ca'
+          date_hour = "#{mm_campaign_start['ca'][0]} #{mm_campaign_start['ca'][1]}"
+          campaign_start = DateTime.parse(date_hour).strftime('%d.%m.%Y %H:%M:%S')
           if locale == 'ca_en'
             lang = 'en'
           else
@@ -78,77 +111,107 @@ module Middleman
         if locale == 'uk_en_UK'
           lang = 'en_UK'
           country_code = 'uk'
+          date_hour = "#{mm_campaign_start['uk'][0]} #{mm_campaign_start['uk'][1]}"
+          campaign_start = DateTime.parse(date_hour).strftime('%d.%m.%Y %H:%M:%S')
         end
         if locale == 'us_en_US'
           lang = 'en_US'
           country_code = 'us'
+          date_hour = "#{mm_campaign_start['us'][0]} #{mm_campaign_start['us'][1]}"
+          campaign_start = DateTime.parse(date_hour).strftime('%d.%m.%Y %H:%M:%S')
         end
 
         # =>  Create an array with all the directories inside the working dir
         content_dir = Dir.glob('*')
 
-        say("== Generating impex files for #{locale}", :green)
+        say("\n\n≡≡ Generating impex content files for #{locale}", :green)
 
-        append_to_file impex_file, :verbose => false do
+        append_to_file impex_content_file, :verbose => false do
           "#Hybris Header\n$contentCatalog=aldoCommerceContentCatalog\n$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]\n$picture=media(code, $contentCV);\n$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n$lang=#{lang}\n$countryCode=#{country_code}\n$siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n"
         end
 
+        #campaign_start = DateTime.parse(mm_campaign_start[country_code][0] mm_campaign_start[country_code][1]).strftime('%d.%m.%Y %H:%M:%S')
+        campaign_end = (Date.parse(campaign_start).end_of_month).strftime('%d.%m.%Y %H:%M:%S')
+        previous_campaign_start = (Date.parse(campaign_start) - 10).strftime('%d.%m.%Y %H:%M:%S')
+        previous_campaign_end = (Date.parse(campaign_start) - ((0.01 / 24)/36)).strftime('%d.%m.%Y %H:%M:%S')
+
+
+        append_to_file impex_content_file, :verbose => false do
+          "\n####################################################\n#                TIME RESTRICTIONS                 #\n####################################################\n#Create time restrictions here then add time restriction name to the end of each component\nINSERT_UPDATE CMSTimeRestriction;$contentCV[unique=true];uid[unique=true];name;activeFrom[dateformat=dd.MM.yyyy HH:mm:ss];activeUntil[dateformat=dd.MM.yyyy HH:mm:ss]\n;;Time-Restriction-#{mm_config['previous_campaign']};Time Restriction #{mm_config['previous_campaign']};#{previous_campaign_start};#{previous_campaign_end};\n;;Time-Restriction-#{mm_config['week']};Time Restriction #{mm_config['week']};#{campaign_start};#{campaign_end};\n"
+        end
+
         # =>  Read page and get content
-        impex_pages.each do |impex_page|
+        impexer_config['impex_pages'].each do |impex_page|
           content = File.join(build_dir, impex_page['page_file'])
           content_page = File.read(content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-          say("Reading & Generating #{impex_page['page_title']} using #{impex_page['type']} template...", :yellow)
+          # say("Reading & Generating #{impex_page['page_title']}", :green)
           if impex_page['page_title'] == 'homepage'
-            append_to_file impex_file, :verbose => false do
-              "\n# Homepage \nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]\n;;#{impex_page['hybris_id']};\"#{content_page}\"\n"
+            append_to_file impex_content_file, :verbose => false do
+              "\n# Homepage \nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]\n;;HomepageComponent#{mm_config['week']};\"#{content_page}\";Time Restriction #{mm_config['week']};\n"
             end
           end
 
           head_content_path = File.join(build_dir, '/head.html')
           head_content = File.read(head_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-          say("Generating head template...", :yellow)
-          append_to_file impex_file, :verbose => false do
-            "\n# Header Component\n;;HTMLHeaderComponent;\"#{head_content}\"\n"
+          # say("Generating head template...", :green)
+          append_to_file impex_content_file, :verbose => false do
+            "\n# Header Component\n;;HTMLHeaderComponent#{mm_config['week']};\"#{head_content}\";Time Restriction #{mm_config['week']};\n"
           end
           footer_content_path = File.join(build_dir, '/footer.html')
           footer_content = File.read(footer_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-          say("Generating footer template...", :yellow)
-          append_to_file impex_file, :verbose => false do
-            "\n# Footer Component\n;;HTMLFooterComponent;\"#{footer_content}\"\n"
+          # say("Generating footer template...", :green)
+          append_to_file impex_content_file, :verbose => false do
+            "\n# Footer Component\n;;HTMLFooterComponent#{mm_config['week']};\"#{footer_content}\";Time Restriction #{mm_config['week']};\n"
           end
 
           # Generate the rest of the content
-          append_to_file impex_file, :verbose => false do
-            "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog
-    $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-    UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n"
-          end
-          if impex_page['type'] == 'landing page'
-            append_to_file(impex_file, "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";\"#{content_page}\";\"\";\n", :verbose => false)
-          end
-          if impex_page['type'] == 'category banner'
-            append_to_file(impex_file, "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";;\"#{content_page}\"\n", :verbose => false)
+
+          append_to_file impex_content_file, :verbose => false do
+            "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction
+INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]\n\n"
           end
 
-          if impex_page.include?("sub_pages")
+          unless impex_page['type'] == 'homepage'
+            apply_restriction_config = "\n\n#In this section you are tying your time restricted content to a category id. You can also put in a current (not time restricted) landing page or banner\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
 
-            impex_page['sub_pages'].each do |sub_page|
-              sub_content = File.join(build_dir, sub_page['page_file'])
-              sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-              say("Reading & Generating #{impex_page['page_title']} #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
+            append_to_file impex_content_file, :verbose => false do
+              apply_restriction_config
+            end
 
-              if sub_page['type'] == 'landing page'
-                say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
-                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\";\"\";\n", :verbose => false)
-              elsif sub_page['type'] == 'category banner'
-                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;\"#{sub_content_page}\"\n", :verbose => false)
-              else
-                append_to_file(impex_file, "##{impex_page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\"\n", :verbose => false)
-              end # End of check for page type inside sub_pages
+            insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+              "\n##{impex_page['page_title']}\n"
+              ";#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
+              ";;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n\n"
+            end
 
-            end # End of sub_pages generator loop
+            if impex_page.include?("sub_pages")
 
-          end # End of sub_pages conditional check
+              impex_page['sub_pages'].each do |sub_page|
+                sub_content = File.join(build_dir, sub_page['page_file'])
+                sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+                # say("Reading & Generating #{impex_page['page_title']} #{sub_page['page_title']}", :yellow)
+
+                  insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+                    "\n##{sub_page['page_title']}\n"
+                    ";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;#{sub_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
+                    ";;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;#{sub_page['type']};#{campaign_start};#{campaign_end};\"#{sub_content_page}\"\n\n"
+                  end
+
+                  insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+                    "\n##{sub_page['page_title']}\n"
+                    ";;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                  end
+
+              end # End of sub_pages generator loop
+
+            end # End of sub_pages conditional check
+
+            insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+              "\n##{impex_page['page_title']}\n"
+              ";;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['week']};\n"
+            end
+
+          end
 
         end # End of impex_pages loop
 
@@ -157,17 +220,18 @@ module Middleman
         l3_build_dir = build_dir + '/l3'
         # =>  Create an array with all the directories inside the working dir
         l3_content_dir = Dir.glob(build_dir + 'l3/*')
-        say("Generating L3 for #{locale}...", :yellow)
-        append_to_file(impex_file, "\n#L3 Content Page\n", :verbose => false)
+        # say("Generating L3 for #{locale}...", :yellow)
+        append_to_file(impex_content_file, "\n#L3 Content Page\n", :verbose => false)
         l3_content_dir.each do |l3_content|
           l3_hybris_page_name = l3_content.to_s.gsub(/\d{3,}-/, '').gsub(/\-/,' ').strip
           l3_hybris_id = l3_content.match(/\d{3,}/).to_s
           unless l3_hybris_id.empty?
             l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-            append_to_file(impex_file, "##{l3_hybris_page_name}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
+            append_to_file(impex_content_file, "##{l3_hybris_page_name}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
           end
         end
-        say("Finished to generate the impex file for #{locale}\nYou can find it in: #{impex_file}")
+        say("   ├─ Finished to generate the impex content files for #{locale}", :yellow)
+        say("   └─ You can find it in: #{impex_content_file}\n", :yellow)
 
       end # End of the generate method
 

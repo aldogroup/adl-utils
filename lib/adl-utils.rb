@@ -1,5 +1,6 @@
 # Require core library
 require 'middleman-core'
+require 'active_support/core_ext'
 
 require 'adl-utils/commands'
 
