@@ -79,7 +79,7 @@ module Middleman
         say("\n░▒▓ Starting ImpEx Builder Tool ▓▒░\n", :green)
         say("\n══ Generating impex config file", :green)
         append_to_file impex_config_file, :verbose => false do
-          "\n####################################################\n#                    WCMS CONFIG                   #\n####################################################\n\n#### DO NOT MODIFY ####\n# Macros / Replacement Parameter definitions\n$contentCatalog=aldoCommerceContentCatalog\n$caProductCatalog=caAldoProductCatalog\n$ukProductCatalog=ukAldoProductCatalog\n$usProductCatalog=usAldoProductCatalog\n\n$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]\n$caProductCV=catalogVersion(catalog(id[default=$caProductCatalog]),version[default='Staged'])[unique=true,default=$caProductCatalog:Staged]\n$ukProductCV=catalogVersion(catalog(id[default=$ukProductCatalog]),version[default='Staged'])[unique=true,default=$ukProductCatalog:Staged]\n$usProductCV=catalogVersion(catalog(id[default=$usProductCatalog]),version[default='Staged'])[unique=true,default=$usProductCatalog:Staged]\n$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n\n# CMS Footer Component (ignore this but leave it in the file for now)\nINSERT_UPDATE FooterComponent;$contentCV[unique=true];uid[unique=true];wrapAfter;&componentRef;name;navigationNodes(&nodeRef)\n;;FooterComponent;2;FooterComponent;Footer Component\n\n#### END DO NOT MODIFY ####\n\n#### CREATE COMPONENTS FOR HOME PAGE (header, content & footer) ####\n# CMS Paragraph Components\nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef\n;;HomepageComponent#{mm_config['week']};Home Page Component for #{mm_config['week']};HomepageComponent#{mm_config['week']};\n;;HTMLHeaderComponent#{mm_config['week']};HTML Header Component for #{mm_config['week']};HTMLHeaderComponent#{mm_config['week']};\n;;HTMLFooterComponent#{mm_config['week']};HTML Footer Component for #{mm_config['week']};HTMLFooterComponent#{mm_config['week']};\n\n\n#### ADD THE ABOVE COMPONENTS TO THE RIGHT HOME PAGE PLACEHOLDERS ####\n# Once you create the new paragraph component above, add it to the component list separated by a comma like I did with MegaPromoBanner2 below\nINSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)\n;;HTMLHeaderSlot;HTML Header Slot;true;HTMLHeaderComponent#{mm_config['week']};\n;;FooterSlot;Footer;true;FooterComponent,HTMLFooterComponent#{mm_config['week']};\n;;Section1Slot-Homepage;Section1 Slot for Homepage;true;HomepageComponent#{mm_config['week']};"
+          "\n####################################################\n#                    WCMS CONFIG                   #\n####################################################\n\n#### DO NOT MODIFY ####\n# Macros / Replacement Parameter definitions\n$contentCatalog=aldoCommerceContentCatalog\n$caProductCatalog=caAldoProductCatalog\n$ukProductCatalog=ukAldoProductCatalog\n$usProductCatalog=usAldoProductCatalog\n\n$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]\n$caProductCV=catalogVersion(catalog(id[default=$caProductCatalog]),version[default='Staged'])[unique=true,default=$caProductCatalog:Staged]\n$ukProductCV=catalogVersion(catalog(id[default=$ukProductCatalog]),version[default='Staged'])[unique=true,default=$ukProductCatalog:Staged]\n$usProductCV=catalogVersion(catalog(id[default=$usProductCatalog]),version[default='Staged'])[unique=true,default=$usProductCatalog:Staged]\n$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n\n#### END DO NOT MODIFY ####\n\n#### CREATE COMPONENTS FOR HOME PAGE (header, content & footer) ####\n# CMS Paragraph Components\nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef\n;;HomepageComponent#{mm_config['previous_campaign']};Home Page Component for #{mm_config['previous_campaign']};HomepageComponent#{mm_config['previous_campaign']};\n;;HTMLHeaderComponent#{mm_config['previous_campaign']};HTML Header Component for #{mm_config['previous_campaign']};HTMLHeaderComponent#{mm_config['previous_campaign']};\n;;HTMLFooterComponent#{mm_config['previous_campaign']};HTML Footer Component for #{mm_config['previous_campaign']};HTMLFooterComponent#{mm_config['previous_campaign']};\n;;HomepageComponent#{mm_config['week']};Home Page Component for #{mm_config['week']};HomepageComponent#{mm_config['week']};\n;;HTMLHeaderComponent#{mm_config['week']};HTML Header Component for #{mm_config['week']};HTMLHeaderComponent#{mm_config['week']};\n;;HTMLFooterComponent#{mm_config['week']};HTML Footer Component for #{mm_config['week']};HTMLFooterComponent#{mm_config['week']};\n\n\n#### ADD THE ABOVE COMPONENTS TO THE RIGHT HOME PAGE PLACEHOLDERS ####\n# Once you create the new paragraph component above, add it to the component list separated by a comma like I did with MegaPromoBanner2 below\nINSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)\n;;HTMLHeaderSlot;HTML Header Slot;true;HTMLHeaderComponent#{mm_config['week']};\n;;FooterSlot;Footer;true;HTMLFooterComponent#{mm_config['week']};\n;;Section1Slot-Homepage;Section1 Slot for Homepage;true;HomepageComponent#{mm_config['week']};"
         end
 
 
@@ -87,7 +87,6 @@ module Middleman
       end
 
       def generate_content(mm_config={},impexer_config={},locale)
-        # Dir.chdir(ENV['MM_ROOT'])
         FileUtils.rm("build/impex/#{ENV['REV']}/#{locale}.impex") if options[:force]
 
         create_file "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_#{locale}.impex", :verbose => false
@@ -126,41 +125,67 @@ module Middleman
 
         say("\n\n≡≡ Generating impex content files for #{locale}", :green)
 
+        ########################
+        #### Hybris ImpEx Header
+        ########################
         append_to_file impex_content_file, :verbose => false do
           "#Hybris Header\n$contentCatalog=aldoCommerceContentCatalog\n$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]\n$picture=media(code, $contentCV);\n$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n$lang=#{lang}\n$countryCode=#{country_code}\n$siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n"
         end
+        ###############################
+        #### End Of Hybris ImpEx Header
+        ###############################
 
-        #campaign_start = DateTime.parse(mm_campaign_start[country_code][0] mm_campaign_start[country_code][1]).strftime('%d.%m.%Y %H:%M:%S')
+        ##############################
+        #### Start Of Time Restriction
+        ##############################
         campaign_end = (DateTime.parse(campaign_start).end_of_month).strftime('%d.%m.%Y %H:%M:%S')
         previous_campaign_start = (DateTime.parse(campaign_start) - 10).strftime('%d.%m.%Y %H:%M:%S')
         previous_campaign_end = (DateTime.parse(campaign_start) - ((0.01 / 24)/36)).strftime('%d.%m.%Y %H:%M:%S')
-        # binding.pry
-
 
         append_to_file impex_content_file, :verbose => false do
-          "\n####################################################\n#                TIME RESTRICTIONS                 #\n####################################################\n#Create time restrictions here then add time restriction name to the end of each component\nINSERT_UPDATE CMSTimeRestriction;$contentCV[unique=true];uid[unique=true];name;activeFrom[dateformat=dd.MM.yyyy HH:mm:ss];activeUntil[dateformat=dd.MM.yyyy HH:mm:ss]\n;;Time-Restriction-#{mm_config['previous_campaign']};Time Restriction #{mm_config['previous_campaign']};#{previous_campaign_start};#{previous_campaign_end};\n;;Time-Restriction-#{mm_config['week']};Time Restriction #{mm_config['week']};#{campaign_start};#{campaign_end};\n"
+          "\n####################################################\n"
         end
+        append_to_file impex_content_file, :verbose => false do
+          "#                TIME RESTRICTIONS                 #\n"
+        end
+        append_to_file impex_content_file, :verbose => false do
+          "####################################################\n"
+        end
+        append_to_file impex_content_file, :verbose => false do
+          "#Create time restrictions here then add time restriction name to the end of each component\n"
+        end
+        append_to_file impex_content_file, :verbose => false do
+          "INSERT_UPDATE CMSTimeRestriction;$contentCV[unique=true];uid[unique=true];name;activeFrom[dateformat=dd.MM.yyyy HH:mm:ss];activeUntil[dateformat=dd.MM.yyyy HH:mm:ss]\n"
+        end
+        append_to_file impex_content_file, :verbose => false do
+          ";;Time-Restriction-#{mm_config['previous_campaign']};Time Restriction #{mm_config['previous_campaign']};#{previous_campaign_start};#{previous_campaign_end};\n"
+        end
+        append_to_file impex_content_file, :verbose => false do
+          ";;Time-Restriction-#{mm_config['week']};Time Restriction #{mm_config['week']};#{campaign_start};#{campaign_end};\n"
+        end
+
+        #### End Of Time Restriction
 
         # =>  Read page and get content
         impexer_config['impex_pages'].each do |impex_page|
           content = File.join(build_dir, impex_page['page_file'])
           content_page = File.read(content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-          # say("Reading & Generating #{impex_page['page_title']}", :green)
+
           if impex_page['page_title'] == 'homepage'
             append_to_file impex_content_file, :verbose => false do
-              "\n# Homepage \nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]\n;;HomepageComponent#{mm_config['week']};\"#{content_page}\";Time Restriction #{mm_config['week']};\n"
+              "\n# Homepage \nINSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang];restrictions(name)\n;;HomepageComponent#{mm_config['week']};\"#{content_page}\";Time Restriction #{mm_config['week']};\n"
             end
           end
 
           head_content_path = File.join(build_dir, '/head.html')
           head_content = File.read(head_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-          # say("Generating head template...", :green)
+
           append_to_file impex_content_file, :verbose => false do
             "\n# Header Component\n;;HTMLHeaderComponent#{mm_config['week']};\"#{head_content}\";Time Restriction #{mm_config['week']};\n"
           end
           footer_content_path = File.join(build_dir, '/footer.html')
           footer_content = File.read(footer_content_path).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-          # say("Generating footer template...", :green)
+
           append_to_file impex_content_file, :verbose => false do
             "\n# Footer Component\n;;HTMLFooterComponent#{mm_config['week']};\"#{footer_content}\";Time Restriction #{mm_config['week']};\n"
           end
@@ -183,6 +208,10 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
               "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n"
             end
 
+            insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+              "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['week']};\n"
+            end
+
             if impex_page.include?("sub_pages")
 
               impex_page['sub_pages'].each do |sub_page|
@@ -195,17 +224,14 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
                   end
 
                   insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                    "\n##{sub_page['page_title']}\n\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                    "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
                   end
 
               end # End of sub_pages generator loop
 
             end # End of sub_pages conditional check
 
-            insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-              "\n##{impex_page['page_title']}\n"
-              ";;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['week']};\n"
-            end
+
 
           end
 
