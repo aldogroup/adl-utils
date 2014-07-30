@@ -171,8 +171,20 @@ module Middleman
 
         # =>  Read page and get content
         impexer_config['impex_pages'].each do |impex_page|
+
           content = File.join(build_dir, impex_page['page_file'])
-          content_page = File.read(content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+          content_page = File.read(content).gsub(' "', '"').gsub('"', '""').gsub('\n', '').force_encoding("ASCII-8BIT")
+
+          if content.include?('ca_en')
+            content_fr = content.gsub('ca_en', 'ca_fr')
+            content_fr_page = File.read(content_fr).gsub(' "', '"').gsub('"', '""').gsub('\n', '').force_encoding("ASCII-8BIT")
+
+          elsif content.include?('ca_fr')
+            content_en = content.gsub('ca_fr', 'ca_en')
+            content_en_page = File.read(content_en).gsub(' "', '"').gsub('"', '""').gsub('\n', '').force_encoding("ASCII-8BIT")
+          end
+
+
 
           if impex_page['page_title'] == 'homepage'
             append_to_file impex_content_file, :verbose => false do
@@ -200,21 +212,52 @@ module Middleman
           end
 
           # Generate the rest of the content
-
-          append_to_file impex_content_file, :verbose => false do
-              "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction
-INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]\n\n"
+          unless content.include?('ca_en') || content.include?('ca_fr')
+            append_to_file impex_content_file, :verbose => false do
+                "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction
+  INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]\n\n"
+            end
+          else
+            #binding.pry
+            if content.include?('ca_en')
+              append_to_file impex_content_file, :verbose => false do
+                "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction
+    INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n"
+              end
+            elsif content.include?('ca_fr')
+              append_to_file impex_content_file, :verbose => false do
+                "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n"
+              end
+            end
           end
-
+          # binding.pry
           unless impex_page['type'] == 'homepage'
+
             apply_restriction_config = "\n\n#In this section you are tying your time restricted content to a category id. You can also put in a current (not time restricted) landing page or banner\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
 
             append_to_file impex_content_file, :verbose => false do
                 apply_restriction_config
             end
 
-            insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
-                "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n"
+            unless locale == 'ca_en' || locale == 'ca_fr'
+              insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+                  "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n"
+              end
+            end
+
+            if content.include?('ca_en')
+              #binding.pry
+              insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+                  "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\";\"#{content_fr_page}\"\n"
+              end
+            elsif content.include?('ca_fr')
+              insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+                  "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\";\"#{content_en_page}\"\n"
+              end
+            end
+
+            insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']};\n"
             end
 
             insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
@@ -235,7 +278,9 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
                   insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
                     "#{previous_sublp}#{current_sublp}"
                   end
-
+                  insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+                    "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};\n"
+                  end
                   insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
                     "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
                   end
