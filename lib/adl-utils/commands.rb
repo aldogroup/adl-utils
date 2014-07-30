@@ -76,8 +76,8 @@ module Middleman
       end
 
       def generate_config(mm_config={})
-        create_file "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_config-#{Time.now.strftime('%y%m%d-%H%M')}.impex", :verbose => false
-        impex_config_file = "build/impex/#{ENV['REV']}/#{mm_config['season']}-#{mm_config['campaign']}_config-#{Time.now.strftime('%y%m%d-%H%M')}.impex"
+        create_file "build/impex/#{ENV['REV']}/1-#{mm_config['season']}-#{mm_config['campaign']}_config-#{Time.now.strftime('%y%m%d-%H%M')}.impex", :verbose => false
+        impex_config_file = "build/impex/#{ENV['REV']}/1-#{mm_config['season']}-#{mm_config['campaign']}_config-#{Time.now.strftime('%y%m%d-%H%M')}.impex"
         say("\n░▒▓ Starting ImpEx Builder Tool ▓▒░\n", :green)
 
         append_to_file impex_config_file, :verbose => false do
@@ -226,7 +226,7 @@ module Middleman
               end
             elsif content.include?('ca_fr')
               append_to_file impex_content_file, :verbose => false do
-                "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n"
+                "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=en]\n\n"
               end
             end
           end
