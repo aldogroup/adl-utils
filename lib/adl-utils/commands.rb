@@ -140,7 +140,8 @@ module Middleman
         ##############################
         #### Start Of Time Restriction
         ##############################
-        campaign_end = (DateTime.parse(campaign_start).end_of_month).strftime('%d.%m.%Y %H:%M:%S')
+        campaign_end = (DateTime.parse(campaign_start).end_of_next_month + 1).strftime('%d.%m.%Y %H:%M:%S')
+        # binding.pry
         previous_campaign_start = (DateTime.parse(campaign_start) - 10).strftime('%d.%m.%Y %H:%M:%S')
         previous_campaign_end = (DateTime.parse(campaign_start) - ((0.01 / 24)/36)).strftime('%d.%m.%Y %H:%M:%S')
 
