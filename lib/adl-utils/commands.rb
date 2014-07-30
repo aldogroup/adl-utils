@@ -256,9 +256,9 @@ module Middleman
               end
             end
 
-            insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']};\n"
-            end
+            # insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+            #     "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']};\n"
+            # end
 
             insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
                 "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['week']};\n"
@@ -269,7 +269,7 @@ module Middleman
                 impex_page['sub_pages'].each do |sub_page|
                   sub_content = File.join(build_dir, sub_page['page_file'])
                   sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT") unless File.file?(sub_content)
-                  puts File.file?(sub_content)
+                  # puts File.file?(sub_content)
                     # say("Reading & Generating #{impex_page['page_title']} #{sub_page['page_title']}", :yellow)
 
                   previous_sublp = "##{sub_page['page_title']}\n;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;#{sub_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
@@ -278,9 +278,9 @@ module Middleman
                   insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
                     "#{previous_sublp}#{current_sublp}"
                   end
-                  insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                    "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};\n"
-                  end
+                  # insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+                  #   "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};\n"
+                  # end
                   insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
                     "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
                   end
