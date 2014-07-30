@@ -173,15 +173,15 @@ module Middleman
         impexer_config['impex_pages'].each do |impex_page|
 
           content = File.join(build_dir, impex_page['page_file'])
-          content_page = File.read(content).gsub(' "', '"').gsub('"', '""').gsub('\n', '').force_encoding("ASCII-8BIT")
+          content_page = File.read(content).gsub(' "', '"').gsub('"', '""').gsub(/\n/, '').force_encoding("ASCII-8BIT")
 
           if content.include?('ca_en')
             content_fr = content.gsub('ca_en', 'ca_fr')
-            content_fr_page = File.read(content_fr).gsub(' "', '"').gsub('"', '""').gsub('\n', '').force_encoding("ASCII-8BIT")
+            content_fr_page = File.read(content_fr).gsub(' "', '"').gsub('"', '""').gsub(/\n/, '').force_encoding("ASCII-8BIT")
 
           elsif content.include?('ca_fr')
             content_en = content.gsub('ca_fr', 'ca_en')
-            content_en_page = File.read(content_en).gsub(' "', '"').gsub('"', '""').gsub('\n', '').force_encoding("ASCII-8BIT")
+            content_en_page = File.read(content_en).gsub(' "', '"').gsub('"', '""').gsub(/\n/, '').force_encoding("ASCII-8BIT")
           end
 
 
