@@ -181,7 +181,7 @@ module Middleman
 
           if mm_config['special_event']
             append_to_file impex_content_file, :verbose => false do
-                ";;HeaderPromotionalBannerComponent;\"<p><img src=""//media.aldoshoes.com/content/uat/black-friday-1/images/freeshipping-blackfriday.gif"" width=""752"" height=""77"" alt="""" /></p>\";Time Restriction #{mm_config['week']};\n"
+                "\n;;HeaderPromotionalBannerComponent;\"<p><img src=""//media.aldoshoes.com/content/uat/black-friday-1/images/freeshipping-blackfriday.gif"" width=""752"" height=""77"" alt="""" /></p>\";Time Restriction #{mm_config['week']};\n"
             end
           end
 
@@ -265,16 +265,20 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
             unless l3_hybris_id.empty?
 
                 l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+                if mm_config['special_event']
+                  previous_l3 = "\n##{l3_title}\n;#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;CATEGORY_BANNER;#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
+                  current_l3 = ";#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\"\n"
 
-                previous_l3 = "\n##{l3_title}\n;#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;CATEGORY_BANNER;#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
-                current_l3 = ";#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\"\n"
+                  insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
+                    "#{previous_l3}#{current_l3}"
+                  end
 
-                insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
-                  "#{previous_l3}#{current_l3}"
-                end
+                  insert_into_file impex_content_file, :before => "#End of L3", :verbose => false do
+                    "\n##{l3_title}\n;;\"#{l3_hybris_id}\";"";"";#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                  end
 
-                insert_into_file impex_content_file, :before => "#End of L3", :verbose => false do
-                  "\n##{l3_title}\n;;\"#{l3_hybris_id}\";"";"";#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                else
+                  append_to_file(impex_content_file, "##{l3_hybris_page_name}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
                 end
 
 
