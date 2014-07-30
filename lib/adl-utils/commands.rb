@@ -1,6 +1,6 @@
 require "middleman-core/cli"
 require 'pry'
-require 'awesome_print'
+# require 'awesome_print'
 # require 'adl-utils/methods/git'
 # require 'adl-utils/strategies'
 require 'adl-utils/version'
@@ -206,66 +206,79 @@ INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;con
           end
 
           unless impex_page['type'] == 'homepage'
-              apply_restriction_config = "\n\n#In this section you are tying your time restricted content to a category id. You can also put in a current (not time restricted) landing page or banner\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
+            apply_restriction_config = "\n\n#In this section you are tying your time restricted content to a category id. You can also put in a current (not time restricted) landing page or banner\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
 
-              append_to_file impex_content_file, :verbose => false do
-                  apply_restriction_config
-              end
+            append_to_file impex_content_file, :verbose => false do
+                apply_restriction_config
+            end
 
-              insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
-                  "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n"
-              end
+            insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+                "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config['previous_campaign']};<ignore>;;#{impex_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config['week']};<ignore>;;#{impex_page['type']};#{campaign_start};#{campaign_end};\"#{content_page}\"\n"
+            end
 
-              insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                  "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['week']};\n"
-              end
+            insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['week']};\n"
+            end
 
-              if impex_page.include?("sub_pages")
-                  #puts FileUtils.pwd()
-                  # binding.pry
-                  if File.file?(impex_page['sub_pages'][0]['page_file']) && File.exist?(File.join(build_dir.to_s, impex_page['sub_pages'][0]['page_file']))
-                      impex_page['sub_pages'].each do |sub_page|
-                          sub_content = File.join(build_dir, sub_page['page_file'])
-                          sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-                          # say("Reading & Generating #{impex_page['page_title']} #{sub_page['page_title']}", :yellow)
+            if impex_page.include?("sub_pages")
+              if File.exist?(File.join(build_dir.to_s, impex_page['sub_pages'][0]['page_file']))
+                impex_page['sub_pages'].each do |sub_page|
+                  sub_content = File.join(build_dir, sub_page['page_file'])
+                  sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT") unless File.file?(sub_content)
+                  puts File.file?(sub_content)
+                    # say("Reading & Generating #{impex_page['page_title']} #{sub_page['page_title']}", :yellow)
 
-                          insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
-                              "\n##{sub_page['page_title']}\n;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;#{sub_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;#{sub_page['type']};#{campaign_start};#{campaign_end};\"#{sub_content_page}\"\n"
-                          end
+                  previous_sublp = "##{sub_page['page_title']}\n;#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;#{sub_page['type']};#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
+                  current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;#{sub_page['type']};#{campaign_start};#{campaign_end};\"#{sub_content_page}\"\n"
 
-                          insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                              "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
-                          end
-
-                      end # End of sub_pages generator loop
-                  else
-                      say("\s\sError: #{File.join(build_dir, impex_page['sub_pages'][0]['page_file'])} Not found", :red)
-                      say("\s\s⚠ Ignoring #{impex_page['sub_pages'][0]['page_title']}, because the file is missing.\n\n", :magenta)
+                  insert_into_file impex_content_file, :before => apply_restriction_config, :verbose => false do
+                    "#{previous_sublp}#{current_sublp}"
                   end
 
-              end # End of sub_pages conditional check
+                  insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
+                    "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                  end
 
-
-
+                end # End of sub_pages generator loop
+              else
+                # binding.pry
+                say("\s\sError: #{File.join(build_dir, impex_page['sub_pages'][0]['page_file'])} Not found", :red)
+                say("\s\s⚠ Ignoring #{impex_page['sub_pages'][0]['page_title']}, because the file is missing.\n\n", :magenta)
+              end
+            end # End of sub_pages conditional check
           end
 
         end # End of impex_pages loop
-
+        append_to_file(impex_content_file, "\n#end of Landing Pages and Children Pages\n\n#L3 Pages\n\n#End of L3")
 
         # =>  Setup the working directory
         @l3_build_dir = build_dir + '/l3'
         # =>  Create an array with all the directories inside the working dir
         l3_content_dir = Dir.glob(build_dir + 'l3/*')
         # say("Generating L3 for #{locale}...", :yellow)
-        append_to_file(impex_content_file, "\n#L3 Content Page\n", :verbose => false)
+        # append_to_file(impex_content_file, "\n#L3 Content Page\n", :verbose => false)
         l3_content_dir.each do |l3_content|
             l3_hybris_page_name = l3_content.to_s.gsub(/\d{3,}-/, '').gsub(/\-/,' ').strip
             l3_hybris_id = l3_content.match(/\d{3,}/).to_s
             l3_title = l3_hybris_page_name.gsub(build_dir.to_s, '').gsub('/l3/', '').lstrip
             #binding.pry
             unless l3_hybris_id.empty?
+
                 l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-                append_to_file(impex_content_file, "\n##{l3_title}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
+
+                previous_l3 = "\n##{l3_title}\n;#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['previous_campaign']};<ignore>;;CATEGORY_BANNER;#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
+                current_l3 = ";#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\"\n"
+
+                insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
+                  "#{previous_l3}#{current_l3}"
+                end
+
+                insert_into_file impex_content_file, :before => "#End of L3", :verbose => false do
+                  "\n##{l3_title}\n;;\"#{l3_hybris_id}\";"";"";#{l3_hybris_id}#{l3_title.capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                end
+
+
+                # append_to_file(impex_content_file, "\n##{l3_title}\n;;\"#{l3_hybris_id}\";;\"#{l3_content_page}\"\n", :verbose => false)
             end
         end
         say("\s\s☑ Finished to generate the impex content files for #{locale}", :green)
