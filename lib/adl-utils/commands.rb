@@ -259,7 +259,7 @@ module Middleman
             # end
 
             insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']};#{impex_page['page_title']}#{mm_config['week']};\n"
+                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']},#{impex_page['page_title']}#{mm_config['week']};\n"
             end
 
             if impex_page.include?("sub_pages")
@@ -280,7 +280,7 @@ module Middleman
                   #   "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['previous_campaign']};\n"
                   # end
                   insert_into_file impex_content_file, :after => apply_restriction_config, :verbose => false do
-                    "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']};#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
+                    "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config['previous_campaign']},#{sub_page['page_title'].capitalize.gsub(' ','')}#{mm_config['week']};\n"
                   end
 
                 end # End of sub_pages generator loop
@@ -318,7 +318,7 @@ module Middleman
                   end
 
                   insert_into_file impex_content_file, :before => "#End of L3", :verbose => false do
-                    "\n##{l3_title}\n;;\"#{l3_hybris_id}\";"";"";#{l3_hybris_id}#{mm_config['previous_campaign']};#{l3_hybris_id}#{mm_config['week']};\n"
+                    "\n##{l3_title}\n;;\"#{l3_hybris_id}\";"";"";#{l3_hybris_id}#{mm_config['previous_campaign']},#{l3_hybris_id}#{mm_config['week']};\n"
                   end
 
                 else
