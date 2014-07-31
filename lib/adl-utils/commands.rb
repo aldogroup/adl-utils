@@ -295,6 +295,12 @@ module Middleman
         end # End of impex_pages loop
         append_to_file(impex_content_file, "\n#end of Landing Pages and Children Pages\n\n#L3 Pages\n\n#End of L3")
 
+        apply_restriction_l3 = "\n\n#In this section you are tying your time restricted L3 to a category id.\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
+
+        insert_into_file impex_content_file, :before => "#End of L3", :verbose => false do
+          apply_restriction_l3
+        end
+
         # =>  Setup the working directory
         @l3_build_dir = build_dir + '/l3'
         # =>  Create an array with all the directories inside the working dir
@@ -306,6 +312,7 @@ module Middleman
             l3_hybris_id = l3_content.match(/\d{3,}/).to_s
             l3_title = l3_hybris_page_name.gsub(build_dir.to_s, '').gsub('/l3/', '').lstrip
             #binding.pry
+
             if l3_content.include?('ca_en')
               l3_header = "\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n#l3"
               insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
@@ -325,6 +332,7 @@ module Middleman
               insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
                 l3_header
               end
+
             end
             unless l3_hybris_id.empty?
 
@@ -347,7 +355,7 @@ module Middleman
                     "#{previous_l3}#{current_l3}"
                   end
 
-                  insert_into_file impex_content_file, :before => "#End of L3", :verbose => false do
+                  insert_into_file impex_content_file, :after => apply_restriction_l3, :verbose => false do
                     "\n##{l3_title}\n;;\"#{l3_hybris_id}\";"";"";#{l3_hybris_id}#{mm_config['previous_campaign']},#{l3_hybris_id}#{mm_config['week']};\n"
                   end
 
