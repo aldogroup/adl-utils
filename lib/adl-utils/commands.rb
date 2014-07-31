@@ -306,14 +306,44 @@ module Middleman
             l3_hybris_id = l3_content.match(/\d{3,}/).to_s
             l3_title = l3_hybris_page_name.gsub(build_dir.to_s, '').gsub('/l3/', '').lstrip
             #binding.pry
+            if l3_content.include?('ca_en')
+              l3_header = "\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n#l3"
+              insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
+                l3_header
+              end
+            elsif l3_content.include?('ca_fr')
+
+              l3_header = "\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=en]\n\n#l3"
+
+              insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
+                l3_header
+              end
+            else
+
+              l3_header = "\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]\n\n#l3"
+
+              insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
+                l3_header
+              end
+            end
             unless l3_hybris_id.empty?
 
                 l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+
                 if mm_config['special_event']
                   previous_l3 = "\n##{l3_title}\n;#{l3_hybris_id}#{mm_config['previous_campaign']};<ignore>;;CATEGORY_BANNER;#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
-                  current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\"\n"
 
-                  insert_into_file impex_content_file, :after => "#L3 Pages", :verbose => false do
+                  if l3_content.include?('ca_en')
+                    l3_content_page_fr = File.read("#{l3_content.gsub('ca_en', 'ca_fr')}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+                    current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\";\"#{l3_content_page_fr}\"\n"
+                  elsif l3_content.include?('ca_fr')
+                    l3_content_page_en = File.read("#{l3_content.gsub('ca_fr', 'ca_en')}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
+                    current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\";\"#{l3_content_page_fr}\"\n"
+                  else
+                    current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\"\n"
+                  end
+
+                  insert_into_file impex_content_file, :after => l3_header, :verbose => false do
                     "#{previous_l3}#{current_l3}"
                   end
 
