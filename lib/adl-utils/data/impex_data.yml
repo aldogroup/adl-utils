@@ -15,7 +15,7 @@
   page_file: /men/index.html
   sub_pages:
     - hybris_id: 240
-      page_title: mr-bs-collection
+      page_title: Mr Bs Collection
       type: CATEGORY_BANNER
       page_file: /men/mr-bs-collection/index.html
 
