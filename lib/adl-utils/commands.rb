@@ -346,7 +346,7 @@ module Middleman
                     current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\";\"#{l3_content_page_fr}\"\n"
                   elsif l3_content.include?('ca_fr')
                     l3_content_page_en = File.read("#{l3_content.gsub('ca_fr', 'ca_en')}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-                    current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\";\"#{l3_content_page_fr}\"\n"
+                    current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\";\"#{l3_content_page_en}\"\n"
                   else
                     current_l3 = ";#{l3_hybris_id}#{mm_config['week']};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\"\n"
                   end
