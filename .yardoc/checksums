@@ -1,0 +1,16 @@
+lib/adl-utils.rb 2726307cf813a2ff6065bfcb6b424e245fbaf976
+lib/adl-utils/version.rb 6dae016e150ab32a74a14b4eb80bab3d7fa8756b
+lib/adl-utils/helpers.rb c183d53cd0731bc7cc15c644e6e6527f8dab5473
+lib/adl-utils/commands.rb 48525959d709e895deded19a9100b855be411b53
+lib/adl-utils/extension.rb ff7ebd7c46b7861a3439e2b736b7e9f97f8173a6
+lib/middleman_extension.rb 98b3283cd4f176a150800fae0a57aee18e200b0a
+lib/adl-utils/strategies.rb cc604776724c4fc062245c603496aca205525db2
+lib/adl-utils/methods/git.rb c698165bfe64935206e7f8556d891a78c471a815
+lib/adl-utils/methods/ftp.rb 83246026c165f67759519ca3e62b4a07f7640fba
+lib/adl-utils/methods/sftp.rb 79094426de93fbea09c875a02b6dbeac2ab121ef
+lib/adl-utils/methods/base.rb 10dc84d5ab483eff42a932bf3b0892adfacfee2a
+lib/adl-utils/methods/rsync.rb 3436c14b61b8e498cbf51eee8c0046667327fda7
+lib/adl-utils/strategies/git/tag.rb 9c9e3e847cd955d845eac726cb4755122172ed97
+lib/adl-utils/strategies/git/base.rb d260401f7c8a68d4b27780a66ec542dab7c6ded0
+lib/adl-utils/strategies/git/submodule.rb 19921776d0426f61ca8cd0c37d23dd873166587e
+lib/adl-utils/strategies/git/force_push.rb 89fb2ba3a6d995b45c111d92abb4bc93728a7f5d
