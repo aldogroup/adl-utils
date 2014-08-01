@@ -1,0 +1,39 @@
+#Hybris Header
+$contentCatalog=aldoCommerceContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV);
+$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog
+$lang=<%= config['lang'] %>
+$countryCode=<%= config['country_code'] %>
+$siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog
+
+####################################################
+#                TIME RESTRICTIONS                 #
+####################################################
+#Create time restrictions here then add time restriction name to the end of each component
+INSERT_UPDATE CMSTimeRestriction;$contentCV[unique=true];uid[unique=true];name;activeFrom[dateformat=dd.MM.yyyy HH:mm:ss];activeUntil[dateformat=dd.MM.yyyy HH:mm:ss]
+;;Time-Restriction-<%= config['previous_campaign'] %>;Time Restriction <%= config['previous_campaign'] %>;<%= config['previous_campaign_start'] %>;<%= config['previous_campaign_end'] %>;
+;;Time-Restriction-<%= config['week'] %>;Time Restriction <%= config['week'] %>;<%= config['campaign_starts'] %>;<%= config['campaign_end'] %>;
+
+# Homepage
+INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang];restrictions(name)
+;;HomepageComponent<%= config['week'] %>;"<%= config['impex_pages'][0]['homepage_content'] %>";Time Restriction <%= config['week'] %>;
+<%# binding.pry %>
+# Header Component
+;;HTMLHeaderComponent<%= config['week'] %>;"<%= config['header_content'] %>";Time Restriction <%= config['week'] %>;
+
+# Footer Component
+;;HTMLFooterComponent<%= config['week'] %>;"<%= config['footer_content'] %>";Time Restriction <%= config['week'] %>;
+
+####################################################
+#                LP & CP CONTENT                   #
+####################################################
+$productCatalog=caAldoProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+#In this section you add the time restriction and the content tied to that time restriction
+INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]
+
+
+#In this section you are tying your time restricted content to a category id. You can also put in a current (not time restricted) landing page or banner
+UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)

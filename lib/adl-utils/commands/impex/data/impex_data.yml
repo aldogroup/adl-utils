@@ -1,0 +1,78 @@
+---
+- hybris_id: MegaPromoBanner
+  page_title: homepage
+  type: homepage
+  page_file: /index.html
+
+- hybris_id: 100
+  page_title: Women
+  type: LANDING_PAGE
+  page_file: /women/index.html
+
+- hybris_id: 200
+  page_title: Men
+  type: LANDING_PAGE
+  page_file: /men/index.html
+  sub_pages:
+    - hybris_id: 240
+      page_title: Mr Bs Collection
+      type: CATEGORY_BANNER
+      page_file: /men/mr-bs-collection/index.html
+
+- hybris_id: 300
+  page_title: Handbags
+  type: LANDING_PAGE
+  page_file: /handbags/index.html
+
+- hybris_id: 400
+  page_title: Accessories
+  type: LANDING_PAGE
+  page_file: /accessories/index.html
+
+- hybris_id: 500
+  page_title: Sale
+  type: LANDING_PAGE
+  page_file: /sale/index.html
+  sub_pages:
+    - hybris_id: 510
+      page_title: Sale Women
+      type: CATEGORY_BANNER
+      page_file: /sale/women/index.html
+    - hybris_id: 520
+      page_title: Sale Men
+      type: CATEGORY_BANNER
+      page_file: /sale/men/index.html
+    - hybris_id: 534
+      page_title: Sale Handbags
+      type: CATEGORY_BANNER
+      page_file: /sale/handbags/index.html
+    - hybris_id: 530
+      page_title: Sale Accessories
+      type: CATEGORY_BANNER
+      page_file: /sale/accessories/index.html
+
+- hybris_id: 600
+  page_title: Clearance
+  type: LANDING_PAGE
+  page_file: /clearance/index.html
+  sub_pages:
+    - hybris_id: 611
+      page_title: Women Shoes
+      type: CATEGORY_BANNER
+      page_file: /clearance/womens-shoes/index.html
+    - hybris_id: 612
+      page_title: Women Sandals
+      type: CATEGORY_BANNER
+      page_file: /clearance/womens-sandals/index.html
+    - hybris_id: 613
+      page_title: Women Boots
+      type: CATEGORY_BANNER
+      page_file: /clearance/womens-boots/index.html
+    - hybris_id: 621
+      page_title: Men Shoes
+      type: CATEGORY_BANNER
+      page_file: /clearance/mens-shoes/index.html
+    - hybris_id: 623
+      page_title: Men Boots
+      type: CATEGORY_BANNER
+      page_file: /clearance/mens-boots/index.html
