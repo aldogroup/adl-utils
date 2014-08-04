@@ -1,12 +1,35 @@
 require 'middleman-core/cli'
 require 'thor'
-# require 'pry'
 require 'adl-utils/version'
 require 'expanded_date'
 
 module Middleman
   module Cli
-    # This class provides a "deploy" command for the middleman CLI.
+
+    class Init
+      no_commands do
+        def upcase_strip(content)
+          regex = /[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/
+          content.upcase.gsub(/#{regex}/, '')
+        end
+        def project_config
+          extend Middleman
+
+          mm = ::Middleman::Application.server.inst do
+            config[:environment] = :build
+          end
+          config = {
+            season: mm.config.season,
+            campaign: mm.config.campaign,
+            week: upcase_strip(mm.config.campaign),
+            previous_campaign: upcase_strip(mm.config.previous_campaign),
+            campaign_start: mm.config.campaign_start,
+            special_event: mm.config.special_event
+          }
+        end
+      end
+    end
+
     class Impex < Thor
       include Thor::Actions
 
@@ -23,34 +46,10 @@ module Middleman
 
       def impex
         build_before
-        mm_var
+        mm_config = Init.new.project_config
       end
 
       protected
-
-      def upcase_strip(content)
-        regex = /[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/
-        content.upcase.gsub(/#{regex}/, '')
-      end
-
-      def mm_var
-        extend Middleman
-
-        mm = ::Middleman::Application.server.inst do
-          config[:environment] = :build
-        end
-
-        @mm_config = {
-          season: mm.config.season,
-          campaign: mm.config.campaign,
-          week: upcase_strip(mm.config.campaign),
-          previous_campaign: upcase_strip(mm.config.previous_campaign),
-          campaign_start: mm.config.campaign_start,
-          special_event: mm.config.special_event
-        }
-
-        generate(@mm_config)
-      end
 
       def impex_yml_file
         "#{File.join(File.dirname(__FILE__), 'impex/data/')}impex_data.yml"
