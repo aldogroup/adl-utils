@@ -52,9 +52,9 @@ module Middleman
           BuildBefore.new.build
         end
 
-        mm_config = InitVar.new.project_config
+        # mm_config = InitVar.new.project_config
 
-        Middleman::Cli::ScheduledImpex.new.shedimpex(mm_config)
+        Middleman::Cli::ScheduledImpex.new.shedimpex
       end
     end
   end
