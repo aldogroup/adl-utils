@@ -49,13 +49,6 @@ module Middleman
         end
       end
 
-      def build_before
-        if yes?('== Do you want to build your project first ?')
-          run("VER=hybris REV=#{ENV['REV']} middleman build --clean") || exit(1)
-        end
-      end
-
-
       def impexify_content(content)
         content = content.gsub(' "', '"').gsub('"', '""').gsub(/\n/, '')
         content.force_encoding('ASCII-8BIT')
