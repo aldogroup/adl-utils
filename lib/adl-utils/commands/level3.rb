@@ -21,34 +21,11 @@ module Middleman
 
       def level3
         build_before
-        generate
+        l3_mm_config = Middleman::Cli::Init.new.project_config
+        generate(l3_mm_config)
       end
 
       protected
-
-      def upcase_strip(content)
-        regex = /[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/
-        content.upcase.gsub(/#{regex}/, '')
-      end
-
-      def mm_var
-        extend Middleman
-
-        mm = ::Middleman::Application.server.inst do
-          config[:environment] = :build
-        end
-
-        @mm_config = {
-            season: mm.config.season,
-            campaign: mm.config.campaign,
-            week: upcase_strip(mm.config.campaign),
-            previous_campaign: upcase_strip(mm.config.previous_campaign),
-            campaign_start: mm.config.campaign_start,
-            special_event: mm.config.special_event
-        }
-
-        generate(@mm_config)
-      end
 
       def impex_yml_file
         "#{File.join(File.dirname(__FILE__), 'impex/data/')}impex_data.yml"

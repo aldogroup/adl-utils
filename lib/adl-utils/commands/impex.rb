@@ -1,5 +1,6 @@
 require 'middleman-core/cli'
 require 'thor'
+require 'pry'
 require 'adl-utils/version'
 require 'expanded_date'
 
@@ -47,6 +48,8 @@ module Middleman
       def impex
         build_before
         mm_config = Init.new.project_config
+        binding.pry
+        generate(mm_config)
       end
 
       protected
