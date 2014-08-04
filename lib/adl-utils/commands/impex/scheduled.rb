@@ -51,6 +51,10 @@ module Middleman
         content.force_encoding('ASCII-8BIT')
       end
 
+      def date_parse(value)
+        DateTime.parse(value).strftime('%d.%m.%Y %H:%M:%S')
+      end
+
       def generate_content(mm_config={}, impexer_config={}, locale)
         lang = nil
         country_code = nil
@@ -67,7 +71,7 @@ module Middleman
         if locale == 'ca_en' || locale == 'ca_fr'
           country_code = 'ca'
           date_hour = "#{mm_campaign_start['ca'][0]} #{mm_campaign_start['ca'][1]}"
-          campaign_start = DateTime.parse(date_hour).strftime('%d.%m.%Y %H:%M:%S')
+          campaign_start = date_parse(date_hour)
           (locale == 'ca_en') ? lang = 'en' : lang = 'fr'
         end
 
@@ -75,14 +79,14 @@ module Middleman
           lang = 'en_UK'
           country_code = 'uk'
           date_hour = "#{mm_campaign_start['uk'][0]} #{mm_campaign_start['uk'][1]}"
-          campaign_start = DateTime.parse(date_hour).strftime('%d.%m.%Y %H:%M:%S')
+          campaign_start = date_parse(date_hour)
         end
 
         if locale == 'us_en_US'
           lang = 'en_US'
           country_code = 'us'
           date_hour = "#{mm_campaign_start['us'][0]} #{mm_campaign_start['us'][1]}"
-          campaign_start = DateTime.parse(date_hour).strftime('%d.%m.%Y %H:%M:%S')
+          campaign_start = date_parse(date_hour)
         end
 
         # =>  Create an array with all the directories inside the working dir
@@ -128,10 +132,10 @@ module Middleman
             content_fr_page = impexify_content(File.read(content_fr))
           end
 
-          if content.include?('ca_fr')
-            content_en = content.gsub('ca_fr', 'ca_en')
-            content_en_page = impexify_content(File.read(content_en))
-          end
+          # if content.include?('ca_fr')
+          #   content_en = content.gsub('ca_fr', 'ca_en')
+          #   content_en_page = impexify_content(File.read(content_en))
+          # end
 
           # Generate the rest of the content
           if !content.include?('ca_en') || !content.include?('ca_fr')
@@ -153,15 +157,28 @@ module Middleman
 
           if content.include?('ca_en')
             append_to_file impex_content_file, verbose: false do
-              "\n# Landing Pages & Category Banner\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n"
+              <<-eos
+              # Landing Pages & Category Banner
+              $productCatalog=#{country_code}AldoProductCatalog
+              $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+              UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]
+
+              #In this section you add the time restriction and the content tied to that time restriction
+              INSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]
+
+
+            eos
             end
           end
 
           if impex_page['type'] == 'LANDING_PAGE'
-            apply_restriction_config = "\n\n#In this section you are tying your time restricted content to a category id. You can also put in a current (not time restricted) landing page or banner\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
+            apply_restriction_config = []
+            apply_restriction_config << "#In this section you are tying your time restricted content to a category id."
+            apply_restriction_config << "You can also put in a current (not time restricted) landing page or banner"
+            apply_restriction_config << "Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n\n"
 
             append_to_file impex_content_file, verbose: false do
-              apply_restriction_config
+              apply_restriction_config.join("\n")
             end
 
             insert_into_file impex_content_file, :before => apply_restriction_config, verbose: false do
