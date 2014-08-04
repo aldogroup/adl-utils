@@ -61,21 +61,18 @@ module Middleman
             impex_property[:date_hour] = "#{mm_campaign_start['ca'][0]} #{mm_campaign_start['ca'][1]}"
             impex_property[:campaign_start] = date_parse(impex_property[:date_hour])
             impex_property[:lang] = 'en'
-          end
-
-          if locale == 'uk_en_UK'
+          elsif locale == 'uk_en_UK'
             impex_property[:lang] = 'en_UK'
             impex_property[:country_code] = 'uk'
             impex_property[:date_hour] = "#{mm_campaign_start['uk'][0]} #{mm_campaign_start['uk'][1]}"
             impex_property[:campaign_start] = date_parse(impex_property[:date_hour])
-          end
-
-          if locale == 'us_en_US'
+          elsif locale == 'us_en_US'
             impex_property[:lang] = 'en_US'
             impex_property[:country_code] = 'us'
             impex_property[:date_hour] = "#{mm_campaign_start['us'][0]} #{mm_campaign_start['us'][1]}"
             impex_property[:campaign_start] = date_parse(impex_property[:date_hour])
           end
+          
           mm_config = mm_config.merge!(impex_property)
           generate_header(mm_config, locale)
         end
