@@ -8,27 +8,32 @@ require 'expanded_date'
 module Middleman
   module Cli
 
-    class Init
-      no_commands do
-        def upcase_strip(content)
-          regex = /[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/
-          content.upcase.gsub(/#{regex}/, '')
-        end
-        def project_config
-          extend Middleman
+    class InitVar
 
-          mm = ::Middleman::Application.server.inst do
-            config[:environment] = :build
-          end
-          config = {
-            season: mm.config.season,
-            campaign: mm.config.campaign,
-            week: upcase_strip(mm.config.campaign),
-            previous_campaign: upcase_strip(mm.config.previous_campaign),
-            campaign_start: mm.config.campaign_start,
-            special_event: mm.config.special_event
-          }
+      def upcase_strip(content)
+        regex = /[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/
+        content.upcase.gsub(/#{regex}/, '')
+      end
+
+      def project_config
+        extend Middleman
+
+        mm = ::Middleman::Application.server.inst do
+          config[:environment] = :build
         end
+
+        @config = {
+          season: mm.config.season,
+          campaign: mm.config.campaign,
+          week: upcase_strip(mm.config.campaign),
+          previous_campaign: upcase_strip(mm.config.previous_campaign),
+          campaign_start: mm.config.campaign_start,
+          special_event: mm.config.special_event,
+          locales: mm.config[:hybris_locales],
+          revision: mm.revision,
+          source_root: mm.root,
+          impex_data: mm.data.impex_data
+        }
       end
     end
 
@@ -42,13 +47,13 @@ module Middleman
       desc 'impex', Middleman::ADLUTILS::IMPEX_DESC
 
       def impex
-        # build_before
+
         if yes?('== Do you want to build your project first ?')
           BuildBefore.new.build
         end
 
-        mm_config = Init.new.project_config
-        # binding.pry
+        mm_config = InitVar.new.project_config
+
         Middleman::Cli::ScheduledImpex.new.shedimpex(mm_config)
       end
     end
