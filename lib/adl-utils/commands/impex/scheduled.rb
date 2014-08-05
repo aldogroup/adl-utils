@@ -27,16 +27,16 @@ module Middleman
 
       no_commands do
         def reset_var
-          @mm_config.delete(:country_code) { "not found" }
-          @mm_config.delete(:lang) { "not found" }
-          @mm_config.delete(:date_hour) { "not found" }
+          @mm_config.delete(:country_code)
+          @mm_config.delete(:lang)
+          @mm_config.delete(:date_hour)
         end
 
         def generate_scheduled(config={})
           @mm_config = config
           config[:locales].each do |loc|
             next if loc.to_s == 'ca_fr'
-            reset_var() unless loc.to_s == 'ca_en'
+            reset_var unless loc.to_s == 'ca_en'
             catch(:done) { content_var(config, loc.to_s) }
           end
         end
@@ -112,7 +112,7 @@ module Middleman
               end
 
               insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
-                "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";" ";" ";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
+                "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\" \";\" \";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
               end
 
             end # End of sub_pages generator loop
@@ -120,7 +120,6 @@ module Middleman
             say("\s\sError: #{File.join(build_dir, impex_page['sub_pages'][0]['page_file'])} Not found", :red)
             say("\s\s Ignoring #{impex_page['sub_pages'][0]['page_title']}, because the file is missing.\n\n", :magenta)
           end
-          config = nil
         end
 
         def campaign_scheduled_end(date)
@@ -173,7 +172,6 @@ module Middleman
           @campaign_end = campaign_scheduled_end(mm_config[:campaign_start_date])
           @previous_campaign_start = new_last_campaign_start(mm_config[:campaign_start_date])
           @previous_campaign_end = new_last_campaign_end(mm_config[:campaign_start_date])
-          # binding.pry
           generate_content(locale)
         end
 
@@ -237,7 +235,7 @@ module Middleman
                 apply_restriction_config
               end
 
-              if !mm_config[:country_code].include?('ca')
+              unless mm_config[:country_code].include?('ca')
                 page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\"\n"
                 insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
                   page_content.force_encoding('ASCII-8BIT')
@@ -252,7 +250,7 @@ module Middleman
               end
 
               insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
-                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";"";"";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{impex_page['page_title']}#{mm_config[:week]};\n"
+                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";\"\";\"\";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{impex_page['page_title']}#{mm_config[:week]};\n"
               end
 
               leveltwo_routine(impex_page, locale) if impex_page.include?('sub_pages') # End of sub_pages conditional check
