@@ -207,6 +207,7 @@ module Middleman
           impexify_content(File.read(content_fr))
         end
 
+        # Still Works needs to be done here (Method is too long)
         def generate_content(locale)
 
           say("\n\n Generating impex content files for #{country_code}", :blue)
@@ -215,6 +216,8 @@ module Middleman
 
           # Read page and get content
           impex_pages.each do |impex_page|
+
+            next if impex_page['type'] == 'homepage'
 
             content = File.join(build_dir, impex_page['page_file'])
             content_page = File.read(content)
@@ -237,32 +240,29 @@ module Middleman
               end
             end
 
-            unless impex_page['type'] == 'homepage'
-
-              append_to_file @impex_content_file, verbose: false do
-                apply_restriction_config
-              end
-
-              unless mm_config[:country_code].include?('ca')
-                page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\"\n"
-                insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                  page_content.force_encoding('ASCII-8BIT')
-                end
-              end
-
-              if content.include?('ca_en')
-                page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\";\"#{content_fr_page}\"\n"
-                insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                  page_content.force_encoding('ASCII-8BIT')
-                end
-              end
-
-              insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
-                "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";\"\";\"\";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{impex_page['page_title']}#{mm_config[:week]};\n"
-              end
-
-              leveltwo_routine(impex_page, locale) if impex_page.include?('sub_pages') # End of sub_pages conditional check
+            append_to_file @impex_content_file, verbose: false do
+              apply_restriction_config
             end
+
+            unless mm_config[:country_code].include?('ca')
+              page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\"\n"
+              insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+                page_content.force_encoding('ASCII-8BIT')
+              end
+            end
+
+            if content.include?('ca_en')
+              page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\";\"#{content_fr_page}\"\n"
+              insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+                page_content.force_encoding('ASCII-8BIT')
+              end
+            end
+
+            insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
+              "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";\"\";\"\";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{impex_page['page_title']}#{mm_config[:week]};\n"
+            end
+
+            leveltwo_routine(impex_page, locale) if impex_page.include?('sub_pages') # End of sub_pages conditional check
 
           end # End of impex_pages loop
 

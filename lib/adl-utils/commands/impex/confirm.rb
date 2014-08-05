@@ -50,12 +50,13 @@ module Middleman
           end
 
           if page.include?('sub_pages')
-            sub_pages(build_dir, page)
+            page['sub_pages'].each do |sub_page|
+              sub_pages(build_dir, sub_page)
+            end # End of sub_pages generator loop
           end # End of sub_pages conditional check
         end
 
-        def sub_pages(build_dir, page)
-          page['sub_pages'].each do |sub_page|
+        def sub_pages(build_dir, sub_page={})
             sub_content = File.join(build_dir, sub_page['page_file'])
             sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
             say("Reading & Generating #{page['page_title']} #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
@@ -68,8 +69,6 @@ module Middleman
             else
               append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\"\n", :verbose => false)
             end # End of check for page type inside sub_pages
-          end # End of sub_pages generator loop
-
         end
       end
     end
