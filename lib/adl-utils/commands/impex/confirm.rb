@@ -11,6 +11,18 @@ module Middleman
 
       no_commands do
 
+        def landing_page_impex(file_destination, page={}, content)
+          append_to_file file_destination, :verbose => false do
+            "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\n"
+          end
+        end
+
+        def category_banner_impex(file_destination, page={}, content)
+          append_to_file file_destination, :verbose => false do
+            "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\"\n"
+          end
+        end
+
         def confirm_generate(config={}, locale, impex_file)
 
           build_dir = Pathname.new("build/#{config[:revision]}/hybris/" + locale)
@@ -31,34 +43,36 @@ module Middleman
             end
 
             if page['type'] == 'landing page'
-              append_to_file(confirm_file, "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content_page}\";\"\";\n", :verbose => false)
+              landing_page_impex(confirm_file, page, content_page)
             else
-              append_to_file(confirm_file, "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content_page}\"\n", :verbose => false)
+              category_banner_impex(confirm_file, page, content_page)
             end
 
             if page.include?('sub_pages')
-
-              page['sub_pages'].each do |sub_page|
-                sub_content = File.join(build_dir, sub_page['page_file'])
-                sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
-                say("Reading & Generating #{page['page_title']} #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
-
-                if sub_page['type'] == 'landing page'
-                  say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
-                  append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\";\"\";\n", :verbose => false)
-                elsif sub_page['type'] == 'category banner'
-                  append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};;\"#{sub_content_page}\"\n", :verbose => false)
-                else
-                  append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\"\n", :verbose => false)
-                end # End of check for page type inside sub_pages
-
-              end # End of sub_pages generator loop
-
+              sub_pages(build_dir, page)
             end # End of sub_pages conditional check
 
           end # End of confirm_impex_pages loop
 
         end # End of the generate method
+
+        def sub_pages(build_dir, page)
+          page['sub_pages'].each do |sub_page|
+            sub_content = File.join(build_dir, sub_page['page_file'])
+            sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
+            say("Reading & Generating #{page['page_title']} #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
+
+            if sub_page['type'] == 'landing page'
+              say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
+              append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\";\"\";\n", :verbose => false)
+            elsif sub_page['type'] == 'category banner'
+              append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};;\"#{sub_content_page}\"\n", :verbose => false)
+            else
+              append_to_file(confirm_file, "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\"\n", :verbose => false)
+            end # End of check for page type inside sub_pages
+          end # End of sub_pages generator loop
+          
+        end
       end
     end
   end
