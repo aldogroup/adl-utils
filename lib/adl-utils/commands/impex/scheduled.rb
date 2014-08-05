@@ -139,7 +139,7 @@ module Middleman
         end
 
         def pretty_golive_confirm
-          (DateTime.parse(mm_config[:campaign_start_date]) + 3).strftime('%d-%m-%Y_%H.%M.%S')
+          (DateTime.parse(mm_config[:campaign_start_date]) + 1.hours).strftime('%d-%m-%Y_%H.%M.%S')
         end
 
         def generate_header(mm_config={}, locale)
