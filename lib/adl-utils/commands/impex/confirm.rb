@@ -55,11 +55,11 @@ module Middleman
         def landing_page_impex(file_destination, page={}, content)
           if content.include?('ca_fr')
             insert_into_file file_destination, :after => "#ca_fr\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\n"
+              "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\"\"\n"
             end
           else
-            insert_into_file file_destination, :after => "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\n"
+            insert_into_file file_destination, :after => "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n", :verbose => false do
+              "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\"\"\n"
             end
           end
         end
@@ -67,11 +67,11 @@ module Middleman
         def category_banner_impex(file_destination, page={}, content)
           if content.include?('ca_fr')
             insert_into_file file_destination, :after => "#ca_fr\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\"\n"
+              "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\";\"\"\n"
             end
           else
-            insert_into_file file_destination, :after => "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\"\n"
+            insert_into_file file_destination, :after => "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n", :verbose => false do
+              "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\";\"\"\n"
             end
           end
         end
@@ -130,7 +130,7 @@ module Middleman
 
           # Generate the rest of the content
           insert_into_file confirm_file, :after => "#end subs\n", :verbose => false do
-            "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=fr]\n"
+            "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=fr];scheduledContent(&Item)\n\n"
           end
 
           if page['type'] == 'landing page'
