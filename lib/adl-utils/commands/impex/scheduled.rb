@@ -2,6 +2,7 @@ require 'middleman-core/cli'
 require 'thor'
 require 'pry'
 require 'adl-utils/version'
+require 'adl-utils/commands/impex/confirm'
 require 'expanded_date'
 
 module Middleman
@@ -44,7 +45,6 @@ module Middleman
         def mm_config
           @mm_config
         end
-
 
         def impexify_content(content)
           content = content.gsub(' "', '"').gsub('"', '""').gsub(/\n/, '')
@@ -148,22 +148,29 @@ module Middleman
           hybris_header << "$lang=#{mm_config[:lang]}"
           hybris_header << "$countryCode=#{country_code}$siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n\n"
 
-          unless locale == 'ca_en' || locale == 'ca_fr'
-            @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{mm_config[:country_code]}.impex"
-            create_file @impex_content_file, verbose: false
-            append_to_file @impex_content_file, verbose: false do
-              hybris_header.join("\n")
-            end
+          # unless locale == 'ca_en' || locale == 'ca_fr'
+          #   @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{mm_config[:country_code]}.impex"
+          #   create_file @impex_content_file, verbose: false
+          #   append_to_file @impex_content_file, verbose: false do
+          #     hybris_header.join("\n")
+          #   end
+          # end
+
+          #if locale == 'ca_en'
+          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{country_code}.impex"
+          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-confirm-on-#{pretty_golive}_#{country_code}.impex"
+
+          create_file @impex_content_file, verbose: false
+          create_file confirm_impex_file, verbose: false
+
+          append_to_file confirm_impex_file, verbose: false do
+            hybris_header.join("\n")
           end
 
-          if locale == 'ca_en'
-            @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{country_code}.impex"
-            create_file @impex_content_file, verbose: false
-            append_to_file @impex_content_file, verbose: false do
-              hybris_header.join("\n")
-            end
+          append_to_file @impex_content_file, verbose: false do
+            hybris_header.join("\n")
           end
-
+          #end
 
           ##############################
           #### Start Of Time Restriction
@@ -172,6 +179,7 @@ module Middleman
           @campaign_end = campaign_scheduled_end(mm_config[:campaign_start_date])
           @previous_campaign_start = new_last_campaign_start(mm_config[:campaign_start_date])
           @previous_campaign_end = new_last_campaign_end(mm_config[:campaign_start_date])
+          ConfirmImpex.new.confirm_generate(mm_config, locale, confirm_impex_file)
           generate_content(locale)
         end
 

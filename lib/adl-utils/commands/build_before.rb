@@ -5,7 +5,7 @@ module Middleman
 
       no_commands do
         def build
-          run("VER=hybris REV=#{ENV['REV']} middleman build --clean") || exit(1)
+
         end
       end
 

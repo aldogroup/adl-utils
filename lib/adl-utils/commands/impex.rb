@@ -2,7 +2,6 @@ require 'middleman-core/cli'
 require 'thor'
 require 'pry'
 require 'adl-utils/version'
-require 'adl-utils/commands/impex/scheduled'
 require 'expanded_date'
 
 module Middleman
@@ -49,11 +48,11 @@ module Middleman
       def impex
 
         if yes?('== Do you want to build your project first ?')
-          BuildBefore.new.build
+          run("VER=hybris REV=#{ENV['REV']} middleman build --clean") || exit(1)
         end
 
         # mm_config = InitVar.new.project_config
-
+        require 'adl-utils/commands/impex/scheduled'
         Middleman::Cli::ScheduledImpex.new.shedimpex
       end
     end

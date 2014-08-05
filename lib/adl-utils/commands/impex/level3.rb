@@ -1,5 +1,6 @@
 require 'middleman-core/cli'
 # require 'pry'
+require 'thor'
 require 'adl-utils/version'
 
 module Middleman
@@ -21,7 +22,7 @@ module Middleman
 
       def level3
         build_before
-        l3_mm_config = Middleman::Cli::Init.new.project_config
+        l3_mm_config = Init.new.project_config
         generate(l3_mm_config)
       end
 
@@ -104,8 +105,6 @@ module Middleman
           l3_content_page = impexify_content(File.read("#{l3_content}/index.html"))
 
           if mm_config[:special_event]
-            previous_l3 = "\n##{l3_title}\n;#{l3_hybris_id}#{mm_config[:previous_campaign]};<ignore>;;CATEGORY_BANNER;#{previous_campaign_start};#{previous_campaign_end};<ignore>\n"
-
             if l3_content.include?('ca_en')
               l3_content_page_fr = impexify_content(File.read("#{l3_content.gsub('ca_en', 'ca_fr')}/index.html").gsub(' "', '"'))
               current_l3 = ";#{l3_hybris_id}#{mm_config[:week]};<ignore>;;CATEGORY_BANNER;#{campaign_start};#{campaign_end};\"#{l3_content_page}\";\"#{l3_content_page_fr}\"\n"
