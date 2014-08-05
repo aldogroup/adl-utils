@@ -17,4 +17,5 @@ group :test do
   gem 'fivemat'
   gem 'aruba'
   gem 'rspec'
+  gem 'coveralls', require: false
 end
