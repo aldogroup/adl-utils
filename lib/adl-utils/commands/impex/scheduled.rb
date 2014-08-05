@@ -26,10 +26,17 @@ module Middleman
       include Thor::Actions
 
       no_commands do
+        def reset_var
+          @mm_config.delete(:country_code) { "not found" }
+          @mm_config.delete(:lang) { "not found" }
+          @mm_config.delete(:date_hour) { "not found" }
+        end
 
         def generate_scheduled(config={})
           @mm_config = config
-          config[:locales].reject{|l| l == :ca_fr}.each do |loc|
+          config[:locales].each do |loc|
+            next if loc.to_s == 'ca_fr'
+            reset_var() unless loc.to_s == 'ca_en'
             catch(:done) { content_var(config, loc.to_s) }
           end
         end
@@ -59,18 +66,18 @@ module Middleman
           if locale == 'ca_en'
             impex_property[:country_code] = 'ca'
             impex_property[:date_hour] = "#{mm_campaign_start['ca'][0]} #{mm_campaign_start['ca'][1]}"
-            impex_property[:campaign_start] = date_parse(impex_property[:date_hour])
+            impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
             impex_property[:lang] = 'en'
           elsif locale == 'uk_en_UK'
             impex_property[:lang] = 'en_UK'
             impex_property[:country_code] = 'uk'
             impex_property[:date_hour] = "#{mm_campaign_start['uk'][0]} #{mm_campaign_start['uk'][1]}"
-            impex_property[:campaign_start] = date_parse(impex_property[:date_hour])
+            impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
           elsif locale == 'us_en_US'
             impex_property[:lang] = 'en_US'
             impex_property[:country_code] = 'us'
             impex_property[:date_hour] = "#{mm_campaign_start['us'][0]} #{mm_campaign_start['us'][1]}"
-            impex_property[:campaign_start] = date_parse(impex_property[:date_hour])
+            impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
           end
           
           mm_config = mm_config.merge!(impex_property)
@@ -98,10 +105,10 @@ module Middleman
               sub_content_page = impexify_content(File.read(sub_content)) unless File.file?(sub_content)
 
               previous_sublp = "##{sub_page['page_title']}\n;#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:previous_campaign]};<ignore>;;#{sub_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n"
-              current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start]};#{@campaign_end};\"#{sub_content_page}\"\n"
+              current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\"\n"
 
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                "#{previous_sublp}#{current_sublp}"
+                "#{previous_sublp.force_encoding('ASCII-8BIT')}#{current_sublp.force_encoding('ASCII-8BIT')}"
               end
 
               insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
@@ -113,6 +120,7 @@ module Middleman
             say("\s\sError: #{File.join(build_dir, impex_page['sub_pages'][0]['page_file'])} Not found", :red)
             say("\s\s Ignoring #{impex_page['sub_pages'][0]['page_title']}, because the file is missing.\n\n", :magenta)
           end
+          config = nil
         end
 
         def campaign_scheduled_end(date)
@@ -128,7 +136,7 @@ module Middleman
         end
 
         def pretty_golive
-          DateTime.parse(mm_config[:campaign_start].to_s).strftime('%d-%m-%Y')
+          DateTime.parse(mm_config[:campaign_start_date].to_s).strftime('%d-%m-%Y')
         end
 
         def generate_header(mm_config={}, locale)
@@ -142,7 +150,7 @@ module Middleman
           hybris_header << "$countryCode=#{country_code}$siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n\n"
 
           unless locale == 'ca_en' || locale == 'ca_fr'
-            @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{locale}.impex"
+            @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{mm_config[:country_code]}.impex"
             create_file @impex_content_file, verbose: false
             append_to_file @impex_content_file, verbose: false do
               hybris_header.join("\n")
@@ -162,9 +170,9 @@ module Middleman
           #### Start Of Time Restriction
           ##############################
 
-          @campaign_end = campaign_scheduled_end(mm_config[:campaign_start])
-          @previous_campaign_start = new_last_campaign_start(mm_config[:campaign_start])
-          @previous_campaign_end = new_last_campaign_end(mm_config[:campaign_start])
+          @campaign_end = campaign_scheduled_end(mm_config[:campaign_start_date])
+          @previous_campaign_start = new_last_campaign_start(mm_config[:campaign_start_date])
+          @previous_campaign_end = new_last_campaign_end(mm_config[:campaign_start_date])
           # binding.pry
           generate_content(locale)
         end
@@ -174,7 +182,7 @@ module Middleman
         end
 
         def campaign_start
-          mm_config[:campaign_start]
+          mm_config[:campaign_start_date]
         end
 
         def impex_pages
@@ -229,16 +237,17 @@ module Middleman
                 apply_restriction_config
               end
 
-              # binding.pry
-              if !country_code.include?('ca')
+              if !mm_config[:country_code].include?('ca')
+                page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\"\n"
                 insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                  "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start]};#{@campaign_end};\"#{content_page}\"\n"
+                  page_content.force_encoding('ASCII-8BIT')
                 end
               end
 
               if content.include?('ca_en')
+                page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\";\"#{content_fr_page}\"\n"
                 insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                  "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start]};#{@campaign_end};\"#{content_page}\";\"#{content_fr_page}\"\n"
+                  page_content.force_encoding('ASCII-8BIT')
                 end
               end
 
