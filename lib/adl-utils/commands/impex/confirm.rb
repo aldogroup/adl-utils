@@ -25,13 +25,14 @@ module Middleman
             next if page['page_title'] == 'homepage'
             binding.pry
             # Generate the rest of the content
+
             append_to_file confirm_file, :verbose => false do
               "\n# Landing Pages & Category Banner\n$productCatalog=#{config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n"
             end
+
             if page['type'] == 'landing page'
               append_to_file(confirm_file, "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content_page}\";\"\";\n", :verbose => false)
-            end
-            if page['type'] == 'category banner'
+            else
               append_to_file(confirm_file, "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content_page}\"\n", :verbose => false)
             end
 
