@@ -234,7 +234,7 @@ module Middleman
             end
 
             if content.include?('ca_en')
-              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{impexify_content(content_fr_page)}\"\n"
+              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{content_fr_page}\"\n"
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
