@@ -12,8 +12,10 @@ group :development do
 end
 
 group :test do
+  gem 'codeclimate-test-reporter'
   gem 'cucumber'
   gem 'fivemat'
   gem 'aruba'
   gem 'rspec'
+  gem 'coveralls', require: false
 end

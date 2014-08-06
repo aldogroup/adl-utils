@@ -1,0 +1,442 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: Middleman::ADLUTILS::Methods::Base
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../../../';
+  framesUrl = "../../../frames.html#!Middleman/ADLUTILS/Methods/Base.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../../../_index.html">Index (B)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Middleman.html" title="Middleman (module)">Middleman</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../ADLUTILS.html" title="Middleman::ADLUTILS (module)">ADLUTILS</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Methods.html" title="Middleman::ADLUTILS::Methods (module)">Methods</a></span></span>
+     &raquo; 
+    <span class="title">Base</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../../../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../../../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: Middleman::ADLUTILS::Methods::Base
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Middleman::ADLUTILS::Methods::Base</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">lib/adl-utils/methods/base.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="Ftp.html" title="Middleman::ADLUTILS::Methods::Ftp (class)">Ftp</a></span>, <span class='object_link'><a href="Git.html" title="Middleman::ADLUTILS::Methods::Git (class)">Git</a></span>, <span class='object_link'><a href="Rsync.html" title="Middleman::ADLUTILS::Methods::Rsync (class)">Rsync</a></span></p>
+</div>
+
+
+
+
+  <h2>Instance Attribute Summary <small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#options-instance_method" title="#options (instance method)">- (Object) <strong>options</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute options.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#server_instance-instance_method" title="#server_instance (instance method)">- (Object) <strong>server_instance</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute server_instance.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (Base) <strong>initialize</strong>(server_instance, options = {}) </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Base.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#process-instance_method" title="#process (instance method)">- (Object) <strong>process</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="Middleman::ADLUTILS::Methods::Base (class)">Base</a></span></tt>) <strong>initialize</strong>(server_instance, options = {}) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of Base</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+7
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/adl-utils/methods/base.rb', line 7</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_server_instance'>server_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='ivar'>@options</span>          <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span>
+  <span class='ivar'>@server_instance</span>  <span class='op'>=</span> <span class='id identifier rubyid_server_instance'>server_instance</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="options-instance_method">
+  
+    - (<tt>Object</tt>) <strong>options</strong>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute options</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+5
+6
+7</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/adl-utils/methods/base.rb', line 5</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
+  <span class='ivar'>@options</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="server_instance-instance_method">
+  
+    - (<tt>Object</tt>) <strong>server_instance</strong>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute server_instance</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+5
+6
+7</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/adl-utils/methods/base.rb', line 5</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_server_instance'>server_instance</span>
+  <span class='ivar'>@server_instance</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="process-instance_method">
+  
+    - (<tt>Object</tt>) <strong>process</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>NotImplementedError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/adl-utils/methods/base.rb', line 12</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_process'>process</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotImplementedError</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Tue Jul 29 16:34:13 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.0.0).
+</div>
+
+  </body>
+</html>
