@@ -39,7 +39,7 @@ module Middleman
           config[:environment] = :build
         end
 
-        @config = {
+        @mm_var = {
             season: mm.config.season,
             campaign: mm.config.campaign,
             week: upcase_strip(mm.config.campaign),
@@ -51,7 +51,7 @@ module Middleman
             source_root: mm.root,
             impex_data: mm.data.impex_data
         }
-        generate(@config)
+        generate(@mm_var)
       end
 
       def build_before
@@ -77,7 +77,7 @@ module Middleman
       end
 
       def generate(mm_config={})
-        mm_config = @config
+        mm_config = @mm_var
         impexer_config[:locales].each do |loc|
           @impex_file = "build/impex/#{impexer_config[:revision]}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-level3-#{loc}.impex"
           create_file @impex_file, verbose: false
