@@ -89,7 +89,7 @@ module Middleman
           restriction_config << "\n"
           restriction_config << '#In this section you are tying your time restricted content to a category id.'
           restriction_config << '#You can also put in a current (not time restricted) landing page or banner'
-          restriction_config << 'UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)'
+          restriction_config << 'UPDATE Category;$catalogVersion;code[unique=true];scheduledContent(&Item)'
           restriction_config << "\n"
           return restriction_config.join("\n")
         end
@@ -241,7 +241,7 @@ module Middleman
             end
 
             insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
-              "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";;;#{impex_page['page_title']}#{mm_config[:week]};\n"
+              "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";#{impex_page['page_title']}#{mm_config[:week]};\n"
             end
 
             leveltwo_routine(impex_page, locale) if impex_page.include?('sub_pages') # End of sub_pages conditional check
