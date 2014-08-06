@@ -86,11 +86,11 @@ module Middleman
 
         def apply_restriction_config
           restriction_config = []
-          restriction_config << '#In this section you are tying your time restricted content to a category id.'
           restriction_config << "\n"
+          restriction_config << '#In this section you are tying your time restricted content to a category id.'
           restriction_config << '#You can also put in a current (not time restricted) landing page or banner'
-          restriction_config << 'Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)'
-          restriction_config << "\n\n"
+          restriction_config << 'UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=en];categoryBanner[lang=$lang];scheduledContent(&Item)'
+          restriction_config << "\n"
           return restriction_config.join("\n")
         end
 
@@ -102,17 +102,16 @@ module Middleman
             impex_page['sub_pages'].each do |sub_page|
 
               sub_content = File.join(build_dir, sub_page['page_file'])
-              sub_content_page = impexify_content(File.read(sub_content)) unless File.file?(sub_content)
+              sub_content_page = impexify_content(File.read(sub_content))
 
-              previous_sublp = "##{sub_page['page_title']}\n;#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:previous_campaign]};<ignore>;;#{sub_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n"
               current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\"\n"
 
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                "#{previous_sublp.force_encoding('ASCII-8BIT')}#{current_sublp.force_encoding('ASCII-8BIT')}"
+                "#{current_sublp.force_encoding('ASCII-8BIT')}"
               end
 
               insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
-                "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\" \";\" \";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
+                "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;;#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
               end
 
             end # End of sub_pages generator loop
@@ -143,32 +142,11 @@ module Middleman
         end
 
         def generate_header(mm_config={}, locale)
-          # hybris_header = []
-          # hybris_header << '#Hybris Header'
-          # hybris_header << '$contentCatalog=aldoCommerceContentCatalog'
-          # hybris_header << '$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]'
-          # hybris_header << '$picture=media(code, $contentCV);'
-          # hybris_header << '$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog'
-          # hybris_header << "$lang=#{mm_config[:lang]}"
-          # hybris_header << "$countryCode=#{country_code}$siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog\n\n"
           @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{country_code}.impex"
           confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-confirm-on-#{pretty_golive_confirm}_#{country_code}.impex"
 
           create_file @impex_content_file, verbose: false
           create_file confirm_impex_file, verbose: false
-
-          # append_to_file confirm_impex_file, verbose: false do
-          #   hybris_header.join("\n")
-          # end
-          #
-          # append_to_file @impex_content_file, verbose: false do
-          #   hybris_header.join("\n")
-          # end
-          #end
-
-          ##############################
-          #### Start Of Time Restriction
-          ##############################
 
           @campaign_end = campaign_scheduled_end(mm_config[:campaign_start_date])
           @previous_campaign_start = new_last_campaign_start(mm_config[:campaign_start_date])
@@ -220,17 +198,17 @@ module Middleman
             content_fr_page = page_fr(content_fr)
 
             append_to_file @impex_content_file, verbose: false do
-              "# Landing Pages & Category Banner\n$productCatalog=#{mm_config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]"
+              "# Landing Pages & Category Banner\n$lang=#{mm_config[:lang]}\n$productCatalog=#{mm_config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
             end
 
             # Generate the rest of the content
-            if !content.include?('ca_en') || !content.include?('ca_fr')
+            if mm_config[:country_code].include?('ca')
               append_to_file @impex_content_file, verbose: false do
-                "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]"
+                "\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=en];bannerContent[lang=fr]\n\n"
               end
-            elsif content.include?('ca_en')
+            else
               append_to_file @impex_content_file, verbose: false do
-                "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]"
+                "\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang]\n\n"
               end
             end
 
@@ -239,21 +217,21 @@ module Middleman
             end
 
             unless mm_config[:country_code].include?('ca')
-              page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\"\n"
+              page_content = "#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\"\n"
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
             end
 
             if content.include?('ca_en')
-              page_content = "\n##{impex_page['page_title']}\n;#{impex_page['page_title']}#{mm_config[:previous_campaign]};<ignore>;;#{impex_page['type']};#{@previous_campaign_start};#{@previous_campaign_end};<ignore>\n;#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{content_page}\";\"#{content_fr_page}\"\n"
+              page_content = "#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{impexify_content(content_fr_page)}\"\n"
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
             end
 
             insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
-              "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";\"\";\"\";#{impex_page['page_title']}#{mm_config[:previous_campaign]},#{impex_page['page_title']}#{mm_config[:week]};\n"
+              "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";;;#{impex_page['page_title']}#{mm_config[:week]};\n"
             end
 
             leveltwo_routine(impex_page, locale) if impex_page.include?('sub_pages') # End of sub_pages conditional check

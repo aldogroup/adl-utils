@@ -21,8 +21,10 @@ module Middleman
 
           # =>  Read page and get content
           append_to_file @confirm_file, :verbose => false do
-            "# Landing Pages & Category Banner\n$productCatalog=#{config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]\n"
-          end
+            "# Landing Pages & Category Banner\n$lang=#{config[:lang]}\n$productCatalog=#{config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n"
+            end
+          append_to_file(@confirm_file, "#end content\n", :verbose => false)
+          
           append_to_file(@confirm_file, "#end subs\n", :verbose => false)
 
           if locale == 'ca_en'
@@ -55,11 +57,11 @@ module Middleman
         def landing_page_impex(file_destination, page={}, content)
           if content.include?('ca_fr')
             insert_into_file file_destination, :after => "#ca_fr\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\"\"\n"
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
             end
           else
-            insert_into_file file_destination, :after => "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};\"#{content}\";\"\";\"\"\n"
+            insert_into_file file_destination, :before => "#end content", :verbose => false do
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
             end
           end
         end
@@ -67,22 +69,22 @@ module Middleman
         def category_banner_impex(file_destination, page={}, content)
           if content.include?('ca_fr')
             insert_into_file file_destination, :after => "#ca_fr\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\";\"\"\n"
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
             end
           else
-            insert_into_file file_destination, :after => "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n", :verbose => false do
-              "##{page['page_title']}\n;;#{page['hybris_id']};;\"#{content}\";\"\"\n"
+            insert_into_file file_destination, :before => "#end content", :verbose => false do
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
             end
           end
         end
 
         def confirm_page_generator(build_dir, confirm_file, page={}, config={})
           content = File.join(build_dir, page['page_file'])
-          content_page = File.read(content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
+          content_page = impexify_content(File.read(content))
 
           # Generate the rest of the content
 
-          if page['type'] == 'landing page'
+          if page['type'] == 'LANDING_PAGE'
             landing_page_impex(confirm_file, page, content_page)
           else
             category_banner_impex(confirm_file, page, content_page)
@@ -101,21 +103,19 @@ module Middleman
           begin
             page['sub_pages'].each do |sub_page|
               sub_content = File.join(build_dir, sub_page['page_file'])
-              sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
-              # say("Reading & Generating #{page['page_title']} #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
+              sub_content_page =impexify_content(File.read(sub_content))
 
-              if sub_page['type'] == 'landing page'
-                # say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
+              if sub_page['type'] == 'LANDING_PAGE'
                 insert_into_file confirm_file, :before => "#end subs\n", :verbose => false do
-                  "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\";\"\";\n"
+                  "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\";\"\";\"\"\n"
                 end
-              elsif sub_page['type'] == 'category banner'
+              elsif sub_page['type'] == 'CATEGORY_BANNER'
                 insert_into_file confirm_file, :before => "#end subs\n", :verbose => false do
-                  "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};;\"#{sub_content_page}\"\n"
+                  "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;\"#{sub_content_page}\";\"\"\n"
                 end
               else
                 insert_into_file confirm_file, :before => "#end subs\n", :verbose => false do
-                  "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\"\n"
+                  "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\"\n"
                 end
               end # End of check for page type inside sub_pages
             end # End of sub_pages generator loop
@@ -126,20 +126,19 @@ module Middleman
 
         def confirm_page_generator_fr(build_dir, confirm_file, page={})
           content = File.join(build_dir, page['page_file'])
-          content_page = File.read(content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
+          content_page = impexify_content(File.read(content))
 
           # Generate the rest of the content
           insert_into_file confirm_file, :after => "#end subs\n", :verbose => false do
-            "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=fr];scheduledContent(&Item)\n\n"
+            "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=fr];categoryBanner[lang=fr];scheduledContent(&Item)\n\n"
           end
 
-          if page['type'] == 'landing page'
+          if page['type'] == 'LANDING_PAGE'
             landing_page_impex(confirm_file, page, content_page)
           else
             category_banner_impex(confirm_file, page, content_page)
           end
 
-          # @finished = false
           if page.include?('sub_pages')
             sub_pages_fr(build_dir, page, confirm_file)
           end
@@ -149,21 +148,20 @@ module Middleman
         begin
           page['sub_pages'].each do |sub_page|
             sub_content = File.join(build_dir, sub_page['page_file'])
-            sub_content_page = File.read(sub_content).gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
-            # say("Reading & Generating #{page['page_title']} #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
+            sub_content_page = impexify_content(File.read(sub_content))
 
-            if sub_page['type'] == 'landing page'
+            if sub_page['type'] == 'LANDING_PAGE'
               # say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
               insert_into_file confirm_file, :after => "#sub_fr\n" , :verbose => false do
-                "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\";\"\";\n"
+                "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\";\"\";\"\"\n"
               end
-            elsif sub_page['type'] == 'category banner'
+            elsif sub_page['type'] == 'CATEGORY_BANNER'
               insert_into_file confirm_file, :after => "#sub_fr\n" , :verbose => false do
-                "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};;\"#{sub_content_page}\"\n"
+                "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;\"#{sub_content_page}\";\"\"\n"
               end
             else
               insert_into_file confirm_file, :after => "#sub_fr\n" , :verbose => false do
-                "##{page['page_title']} #{sub_page['page_title']}\n;;#{sub_page['hybris_id']};\"#{sub_content_page}\"\n"
+                "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\"\n"
               end
             end # End of check for page type inside sub_pages
           end # End of sub_pages generator loop
