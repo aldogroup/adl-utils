@@ -89,7 +89,7 @@ module Middleman
           restriction_config << "\n"
           restriction_config << '#In this section you are tying your time restricted content to a category id.'
           restriction_config << '#You can also put in a current (not time restricted) landing page or banner'
-          restriction_config << 'UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=en];categoryBanner[lang=$lang];scheduledContent(&Item)'
+          restriction_config << 'UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)'
           restriction_config << "\n"
           return restriction_config.join("\n")
         end
@@ -103,11 +103,21 @@ module Middleman
 
               sub_content = File.join(build_dir, sub_page['page_file'])
               sub_content_page = impexify_content(File.read(sub_content))
+              sub_content_fr = fr_swap(sub_content)
+              sub_content_fr_page = page_fr(sub_content_fr)
 
-              current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\"\n"
+              unless mm_config[:country_code].include?('ca')
+                current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\"\n"
+                insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+                  "#{current_sublp.force_encoding('ASCII-8BIT')}"
+                end
+              end
 
-              insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
-                "#{current_sublp.force_encoding('ASCII-8BIT')}"
+              if sub_content.include?('ca_en')
+                current_sublp_fr = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\";\"#{sub_content_fr_page}\"\n"
+                insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+                  "#{current_sublp_fr.force_encoding('ASCII-8BIT')}"
+                end
               end
 
               insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
@@ -142,8 +152,8 @@ module Middleman
         end
 
         def generate_header(mm_config={}, locale)
-          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{country_code}.impex"
-          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-confirm-on-#{pretty_golive_confirm}_#{country_code}.impex"
+          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{country_code}.impex"
+          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-confirm-on-#{pretty_golive_confirm}_#{country_code}.impex"
 
           create_file @impex_content_file, verbose: false
           create_file confirm_impex_file, verbose: false
@@ -204,7 +214,7 @@ module Middleman
             # Generate the rest of the content
             if mm_config[:country_code].include?('ca')
               append_to_file @impex_content_file, verbose: false do
-                "\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=en];bannerContent[lang=fr]\n\n"
+                "\n#In this section you add the time restriction and the content tied to that time restriction\nINSERT_UPDATE ScheduledCategoryContent;&Item;pk[unique=true];$catalogVersion;contentType(code);startDate[dateformat=dd.MM.yyyy hh:mm:ss];endDate[dateformat=dd.MM.yyyy hh:mm:ss];bannerContent[lang=$lang];bannerContent[lang=fr]\n\n"
               end
             else
               append_to_file @impex_content_file, verbose: false do
@@ -217,14 +227,14 @@ module Middleman
             end
 
             unless mm_config[:country_code].include?('ca')
-              page_content = "#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\"\n"
+              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\"\n"
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
             end
 
             if content.include?('ca_en')
-              page_content = "#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{impexify_content(content_fr_page)}\"\n"
+              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{impexify_content(content_fr_page)}\"\n"
               insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
