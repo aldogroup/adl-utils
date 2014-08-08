@@ -50,7 +50,7 @@ module Middleman
             impex_property[:country_code] = 'ca'
             impex_property[:lang] = 'en'
           end
-          
+
           if locale.to_s.include?('uk_en_UK')
             impex_property[:lang] = 'en_UK'
             impex_property[:country_code] = 'uk'
@@ -79,11 +79,11 @@ module Middleman
         def generate_homepage(mm_config={}, locale)
           build_dir = File.join(mm_config[:build_dir].to_s, locale.to_s)
           impex_homepage_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-homepage_#{mm_config[:country_code]}.impex"
+
           opts = Hash.new
+          
           opts[:homepage_content] = File.read(File.join(build_dir, 'index.html'))
-          if locale.to_s =='ca_en'
-            opts[:homepage_content_fr] = page_fr(fr_swap(File.join(build_dir, 'index.html')))
-          end
+          opts[:homepage_content_fr] = page_fr(fr_swap(File.join(build_dir, 'index.html'))) if locale.to_s =='ca_en'
           opts[:head_content] = impexify_content(File.read(File.join(build_dir, '/head.html')))
           opts[:footer_content] = impexify_content(File.read(File.join(build_dir, '/footer.html')))
 
