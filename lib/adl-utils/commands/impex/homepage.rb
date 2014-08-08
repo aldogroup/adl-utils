@@ -67,7 +67,8 @@ module Middleman
         def generate_config(mm_config={})
           Middleman::Cli::GenerateHomepage.source_root('../')
           @template_dir = File.join(File.dirname(__FILE__), '/data/')
-          output_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}_config.impex"
+          campaign =  mm_config[:campaign]
+          output_file = "#{output_dir}/#{gentime}_#{campaign}_config.impex"
           say("\n══ Generating impex config file", :green)
           copy_file(File.join( @template_dir + 'impex_config.tt'), output_file)
           mm_config[:hybris_locales].each do |loc|
@@ -76,12 +77,22 @@ module Middleman
           end
         end
 
+        def gentime
+          Time.now.strftime('%y-%m-%d_%H.%M')
+        end
+
+        def output_dir
+          "build/impex/#{ENV['REV']}"
+        end
+
         def generate_homepage(mm_config={}, locale)
           build_dir = File.join(mm_config[:build_dir].to_s, locale.to_s)
-          impex_homepage_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-homepage_#{mm_config[:country_code]}.impex"
+          campaign =  mm_config[:campaign]
+          country_code = mm_config[:country_code]
+          impex_homepage_file = "#{output_dir}/#{gentime}_#{campaign}-homepage_#{country_code}.impex"
 
           opts = Hash.new
-          
+
           opts[:homepage_content] = File.read(File.join(build_dir, 'index.html'))
           opts[:homepage_content_fr] = page_fr(fr_swap(File.join(build_dir, 'index.html'))) if locale.to_s =='ca_en'
           opts[:head_content] = impexify_content(File.read(File.join(build_dir, '/head.html')))
@@ -89,10 +100,6 @@ module Middleman
 
           template(File.join( @template_dir + 'impex_content.erb'), impex_homepage_file, mm_config.merge(opts))
 
-        end
-
-        def country_code
-          mm_config[:country_code]
         end
 
         def content_page
