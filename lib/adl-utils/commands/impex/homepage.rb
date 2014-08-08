@@ -90,7 +90,7 @@ module Middleman
           campaign =  mm_config[:campaign]
           country_code = mm_config[:country_code]
           impex_homepage_file = "#{output_dir}/#{gentime}_#{campaign}-homepage_#{country_code}.impex"
-
+          template_source = File.join( @template_dir + 'impex_content.erb')
           opts = Hash.new
 
           opts[:homepage_content] = File.read(File.join(build_dir, 'index.html'))
@@ -98,7 +98,7 @@ module Middleman
           opts[:head_content] = impexify_content(File.read(File.join(build_dir, '/head.html')))
           opts[:footer_content] = impexify_content(File.read(File.join(build_dir, '/footer.html')))
 
-          template(File.join( @template_dir + 'impex_content.erb'), impex_homepage_file, mm_config.merge(opts))
+          template(template_source, impex_homepage_file, mm_config.merge(opts))
 
         end
 
