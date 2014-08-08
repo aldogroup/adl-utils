@@ -1,6 +1,6 @@
 # ALDO Utilities
 
-[![Code Climate](https://codeclimate.com/github/blabassi/adl-utils/badges/gpa.svg)](https://codeclimate.com/github/blabassi/adl-utils)
+[![Code Climate](https://codeclimate.com/github/aldogroup/adl-utils/badges/gpa.svg)](https://codeclimate.com/github/aldogroup/adl-utils)
 
 ## Introduction
 A set of tools that we use at the ALDO Group for our Middleman applications. Our goal is to create a common playground for centralizing our helpers and modules that we use everyday.
