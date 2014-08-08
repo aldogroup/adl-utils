@@ -1,6 +1,5 @@
 require 'middleman-core/cli'
 require 'thor'
-require 'pry'
 require 'adl-utils/version'
 require 'expanded_date'
 
@@ -14,26 +13,36 @@ module Middleman
         content.upcase.gsub(/#{regex}/, '')
       end
 
-      def project_config
+      def mm_instance
         extend Middleman
 
-        mm = ::Middleman::Application.server.inst do
+        @mm = ::Middleman::Application.server.inst do
           config[:environment] = :build
         end
+      end
+
+      def project_config
+        mm_instance
 
         @config = {
-          season: mm.config.season,
-          campaign: mm.config.campaign,
-          week: upcase_strip(mm.config.campaign),
-          previous_campaign: upcase_strip(mm.config.previous_campaign),
-          campaign_start: mm.config.campaign_start,
-          special_event: mm.config.special_event,
-          locales: mm.config[:hybris_locales],
-          revision: mm.revision,
-          source_root: mm.root,
-          impex_data: mm.data.impex_data
+          season: @mm.config.season,
+          campaign: @mm.config.campaign,
+          week: upcase_strip(@mm.config.campaign),
+          previous_campaign: upcase_strip(@mm.config.previous_campaign),
+          campaign_start: @mm.config.campaign_start,
+          special_event: @mm.config.special_event,
+          locales: @mm.config[:hybris_locales],
+          revision: @mm.revision,
+          source_root: @mm.root,
+          impex_data: @mm.data.impex_data
         }
       end
+
+      def homepage_config
+        mm_instance
+        return @mm.config
+      end
+
     end
 
     class Impex < Thor
@@ -44,16 +53,20 @@ module Middleman
       namespace :impex
 
       desc 'impex', Middleman::ADLUTILS::IMPEX_DESC
-
+      method_option :homepage
       def impex
 
         if yes?('== Do you want to build your project first ?')
-          run("VER=hybris REV=#{ENV['REV']} middleman build --clean") || exit(1)
+          run("VER=hybris REV=#{ENV['REV']} middleman build --clean", {:verbose => false}) || exit(1)
         end
 
-        # mm_config = InitVar.new.project_config
-        require 'adl-utils/commands/impex/scheduled'
-        Middleman::Cli::ScheduledImpex.new.shedimpex
+        if options[:homepage]
+          require 'adl-utils/commands/impex/homepage'
+          Middleman::Cli::HomepageImpex.new.homepage_impex
+        else
+          require 'adl-utils/commands/impex/scheduled'
+          Middleman::Cli::ScheduledImpex.new.shedimpex
+        end
       end
     end
   end

@@ -1,6 +1,5 @@
 require 'middleman-core/cli'
 require 'thor'
-require 'pry'
 require 'adl-utils/version'
 require 'adl-utils/commands/impex/confirm'
 require 'expanded_date'
