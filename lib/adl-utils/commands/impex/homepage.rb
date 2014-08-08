@@ -49,10 +49,14 @@ module Middleman
           if locale.to_s.include?('ca_en')
             impex_property[:country_code] = 'ca'
             impex_property[:lang] = 'en'
-          elsif locale.to_s.include?('uk_en_UK')
+          end
+          
+          if locale.to_s.include?('uk_en_UK')
             impex_property[:lang] = 'en_UK'
             impex_property[:country_code] = 'uk'
-          elsif locale.to_s.include?('us_en_US')
+          end
+
+          if locale.to_s.include?('us_en_US')
             impex_property[:lang] = 'en_US'
             impex_property[:country_code] = 'us'
           end
