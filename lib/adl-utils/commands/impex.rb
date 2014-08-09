@@ -19,7 +19,7 @@ module Middleman
           config[:environment] = :build
         end
       end
-
+      # define project variable
       def project_config
         mm_instance
 

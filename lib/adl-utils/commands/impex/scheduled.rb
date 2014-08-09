@@ -26,6 +26,7 @@ module Middleman
       include Thor::Actions
 
       no_commands do
+
         def reset_var
           @mm_config.delete(:country_code)
           @mm_config.delete(:lang)
@@ -78,7 +79,7 @@ module Middleman
             impex_property[:date_hour] = "#{mm_campaign_start['us'][0]} #{mm_campaign_start['us'][1]}"
             impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
           end
-          
+
           mm_config = mm_config.merge!(impex_property)
           generate_header(mm_config, locale)
         end
