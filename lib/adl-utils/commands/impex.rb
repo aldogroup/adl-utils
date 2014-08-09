@@ -9,8 +9,7 @@ module Middleman
     class InitVar
 
       def upcase_strip(content)
-        regex = /[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/
-        content.upcase.gsub(/#{regex}/, '')
+        (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/,'')
       end
 
       def mm_instance

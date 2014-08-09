@@ -31,7 +31,7 @@ module Middleman
         end
 
         def upcase_strip(content)
-          (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/,'-')
+          (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/,'')
         end
 
         def gentime
