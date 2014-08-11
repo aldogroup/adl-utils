@@ -15,6 +15,8 @@ $siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldo
 
 INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
 
+;;PermanentFooterHeadComponent;Permanent Footer Head Component;PermanentFooterHeadComponent;
+
 ;;HeaderComponent_CA;Header Component for CA;HeaderComponent_CA;
 ;;HomepageComponent_CA;Home Page Component for CA;HomepageComponent_CA;
 ;;FooterComponent_CA;Footer Component for CA;FooterComponent_CA;
@@ -34,6 +36,6 @@ INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];nam
 #### add it to the component list separated by a comma like I did with MegaPromoBanner2 below
 
 INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)
-;;HeaderSlot;Header Slot;true;HeaderComponent_CA,HeaderComponent_US,HeaderComponent_UK;
+;;HTMLHeaderSlot;Header Slot;true;PermanentFooterHeadComponent,HeaderComponent_CA,HeaderComponent_US,HeaderComponent_UK;
 ;;Section1Slot-Homepage;Section1 Slot for Homepage;true;HomepageComponent_CA,HomepageComponent_US,HomepageComponent_UK;
 ;;FooterSlot;Footer;true;PermanentFooterComponent,FooterComponent_CA,FooterComponent_US,FooterComponent_UK;
