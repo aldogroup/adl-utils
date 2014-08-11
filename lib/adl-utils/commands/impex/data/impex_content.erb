@@ -8,15 +8,19 @@ $lang=<%= config[:lang].to_s %>
 $countryCode=<%= config[:country_code].to_s.upcase %>
 $siteResource_content=$countryCode!!$lang!!jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog
 
+<% if config[:country_code].to_s == 'ca' %>
+INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang];content[lang=fr]
+<% else %>
+INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
+<% end %>
+
 ### Header Component
 ;;HeaderComponent_<%= config[:country_code].to_s.upcase %>;"<%= config[:head_content] %>";
 
 ### Homepage
 <% if config[:country_code].to_s == 'ca' %>
-INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang];content[lang=fr]
 ;;HomepageComponent_<%= config[:country_code].to_s.upcase %>;"<%= config[:homepage_content] %>";"<%= config[:homepage_content_fr] %>";
 <% else %>
-INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
 ;;HomepageComponent_<%= config[:country_code].to_s.upcase %>;"<%= config[:homepage_content] %>";
 <% end %>
 
