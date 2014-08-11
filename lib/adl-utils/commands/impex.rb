@@ -27,7 +27,6 @@ module Middleman
           season: @mm.config.season,
           campaign: @mm.config.campaign,
           week: upcase_strip(@mm.config.campaign),
-          previous_campaign: upcase_strip(@mm.config.previous_campaign),
           campaign_start: @mm.config.campaign_start,
           special_event: @mm.config.special_event,
           locales: @mm.config[:hybris_locales],
