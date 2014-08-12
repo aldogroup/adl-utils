@@ -95,10 +95,10 @@ module Middleman
             country_code = 'us'
           end
           append_to_file @impex_file, verbose: false do
-            "$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]"
+            "$lang=#{lang}\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
           end
           append_to_file @impex_file, verbose: false do
-            "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=#{lang}]"
+            "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]"
           end
           generate_l3(loc, mm_config)
         end
