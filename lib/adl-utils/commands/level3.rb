@@ -98,7 +98,7 @@ module Middleman
             "$lang=#{lang}\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
           end
           append_to_file @impex_file, verbose: false do
-            "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang]"
+            "UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)"
           end
           generate_l3(loc, mm_config)
         end
@@ -117,7 +117,7 @@ module Middleman
           l3_hybris_id = l3_content.match(/\d{3,}/).to_s
           unless l3_hybris_id.empty?
             l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-            append_to_file(@impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\"\n", :verbose => false)
+            append_to_file(@impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\";\"\"\n", :verbose => false)
           end
         end
         say("\s\s Finished to generate the impex content files for #{locale}", :green)
