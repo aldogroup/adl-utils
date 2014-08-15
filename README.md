@@ -1,35 +1,34 @@
 <h1 id="aldo-utilities">ALDO Utilities <a href="https://codeclimate.com/github/aldogroup/adl-utils"><img src="https://codeclimate.com/github/aldogroup/adl-utils/badges/gpa.svg" alt="Code Climate" title=""></a> <a href="https://codeclimate.com/github/aldogroup/adl-utils"><img src="https://codeclimate.com/github/aldogroup/adl-utils/badges/coverage.svg" alt="Test Coverage" title=""></a></h1>
 
-<p><div class="toc">
-<ul>
-<li><a href="#aldo-utilities">ALDO Utilities  </a><ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#command-line">Command Line</a><ul>
-<li><a href="#daemon">Daemon</a></li>
-<li><a href="#rebuild">Rebuild</a></li>
-<li><a href="#impex">Impex</a></li>
-<li><a href="#release">Release</a></li>
-<li><a href="#akamai-sync">Akamai Sync</a></li>
-</ul>
-</li>
-<li><a href="#helpers">Helpers</a><ul>
-<li><ul>
-<li><a href="#price-formatter">Price formatter</a></li>
-<li><a href="#country-conditionals">Country conditionals</a></li>
-<li><a href="#page-classes">Page classes</a></li>
-<li><a href="#sanitize-clean">Sanitize clean</a></li>
-<li><a href="#supprice">Supprice</a></li>
-<li><a href="#convert-class">Convert class</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<div class="toc">
+    <ul>
+        <li><a href="#aldo-utilities">ALDO Utilities</a>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#command-line">Command Line</a>
+                    <ul>
+                        <li><a href="#daemon">Daemon</a></li>
+                        <li><a href="#rebuild">Rebuild</a></li>
+                        <li><a href="#impex">Impex</a></li>
+                        <li><a href="#release">Release</a></li>
+                        <li><a href="#akamai-sync">Akamai Sync</a></li>
+                    </ul>
+                </li>
+                <li><a href="#helpers">Helpers</a></li>
+                    <ul>
+                        <li><a href="#price-formatter">Price formatter</a></li>
+                        <li><a href="#country-conditionals">Country conditionals</a></li>
+                        <li><a href="#page-classes">Page classes</a></li>
+                        <li><a href="#sanitize-clean">Sanitize clean</a></li>
+                        <li><a href="#supprice">Supprice</a></li>
+                        <li><a href="#convert-class">Convert class</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>
-</p>
 
 <h2 id="introduction">Introduction</h2>
 
