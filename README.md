@@ -199,7 +199,7 @@ Will check for `\n` inside the variable and replace it with a `<br />`.
 
 **Example:**
 
-> newline2br(‘this is an\\nexample’)
+> newline2br(‘this is an\\nexample’)  
 >  =\> this is an`<br />`example
 
 #### Supprice
