@@ -119,9 +119,9 @@ It will also prompt you if you want to build your project
  `--l3` Will generate all the level3 pages. (`generate_l3` must be set to true in `config.rb`)
 
 **Example:**  
- `VER=hybris REV=staging middleman impex`
-or
- `hybris-staging impex`  
+ `VER=hybris REV=staging middleman impex`  
+or  
+ `hybris-staging impex`   
 
 Given this example, Middleman will build the project and generate the impex files for our staging environment.
 
