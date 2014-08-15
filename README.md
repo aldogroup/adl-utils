@@ -100,14 +100,15 @@ Given this example, we restructure the Hybris production build folder generated 
 
 ### Impex
 
-This command will generate impex files from your build directory.
+This command will generate impex files from your build directory.  
+It will also prompt you if you want to build your project
 
 **Usage:**
  `middleman impex [--options]`
 
 **Without options:**
- It will only generate the impex that goes for the PCM (Landing Pages & Content Pages).  
- It will generate the impex scheduled version that will need to be uploaded first and also the confirm version that will need to be upload after (when the campaign goes live).
+ It will only generate the impex that goes for the PCM (Landing Pages & Category banners).  
+ It will generate the impex scheduled version that will need to be uploaded first and also the confirm version that will need to be uploaded after (when the campaign is live).
 
 **Example of file generated:**  
  `14-08-11_17.12_fall-winter-confirm-on-12-08-2014_14.30.00_ca.impex`  
@@ -115,7 +116,7 @@ This command will generate impex files from your build directory.
 
 **Options:**  
  `--homepage` Will generate impex for the homepage without time restriction.  
- `--l3` Will generate all the level3 pages (they need to be build before running this command).
+ `--l3` Will generate all the level3 pages.
 
 **Example:**  
  `middleman impex -b -e staging`  
@@ -225,4 +226,15 @@ Will remove the ‘columns’ string and use the integer to generate the class.
 **Example:**
 
 > convert\_class(‘8 columns’)  
+>  =\> adl-col8
+
+#### GetLink
+
+Will generate the right link for the right platform. (works actually only for ALDO)
+
+`getLink(url)`
+
+**Example:**
+
+> getLink(‘8 columns’)  
 >  =\> adl-col8
