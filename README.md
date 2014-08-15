@@ -44,13 +44,21 @@ Then simply run `bundle install` to install/update the gems.
 
 In order to use middleman with the multiple environments and platforms easily, you can use these:
  [aliases](https://gist.github.com/blabassi/8b0cd7e46794ca306e2f) (highly recommended but not mandatory)
- Add them to your `~/.zshrc` or `~/.bashrc` file. You will be able to start middleman with:
- - `icongo` Create Aliases for Middleman in dev environment for Icongo Platform
- - `hybris` Create Aliases for Middleman in dev environment for Hybris Platform
- - `icongo-staging` Create Aliases for Middleman in staging environment for Icongo Platform
- - `hybris-staging` Create Aliases for Middleman in staging environment for Hybris Platform
- - `icongo-prod` Create Aliases for Middleman in production environment for Icongo Platform
- - `hybris-prod` Create Aliases for Middleman in production environment for Hybris Platform
+ Add them to your `~/.zshrc` or `~/.bashrc` file. 
+ You will be able to start middleman with those aliases:
+ 
+ For Icongo Platform:
+ 
+ - `icongo` Launch Middleman in dev environment 
+ - 	`icongo-staging` Launch Middleman in staging environment 	
+ -  `icongo-prod` Launch Middleman in production environment
+
+ 
+For Hybris Platform:
+ 
+- `hybris` Launch Middleman in dev environment
+- `hybris-staging` Launch Middleman in staging environment
+- `hybris-prod` Launch Middleman in production environment
 
 * * * * *
 
