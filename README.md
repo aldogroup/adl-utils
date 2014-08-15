@@ -44,7 +44,7 @@ Then simply run `bundle install` to install/update the gems.
 
 In order to use middleman with the multiple environments and platforms easily, you can use these: 
  [aliases](https://gist.github.com/blabassi/8b0cd7e46794ca306e2f) (highly recommended but not mandatory)  
- Add them to your `~/.zshrc` or `~/.bashrc` file. 
+ Add them to your `~/.zshrc` or `~/.bashrc` file.  
  You will be able to start middleman with those aliases:
  
  For Icongo Platform:
