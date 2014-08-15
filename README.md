@@ -116,10 +116,12 @@ It will also prompt you if you want to build your project
 
 **Options:**  
  `--homepage` Will generate impex for the homepage without time restriction.  
- `--l3` Will generate all the level3 pages.
+ `--l3` Will generate all the level3 pages. (`generate_l3` must be set to true in `config.rb`)
 
 **Example:**  
- `middleman impex -b -e staging`  
+ `VER=hybris REV=staging middleman impex`
+or
+ `hybris-staging impex`  
 
 Given this example, Middleman will build the project and generate the impex files for our staging environment.
 
