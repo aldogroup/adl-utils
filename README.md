@@ -123,7 +123,7 @@ It will also prompt you if you want to build your project
 or  
  `hybris-staging impex`   
 
-Given this example, Middleman will build the project and generate the impex files for our staging environment.
+Given this example, Middleman will build the project and generate the PCM impex files for  staging environment.
 
 * * * * *
 
@@ -232,11 +232,16 @@ Will remove the ‘columns’ string and use the integer to generate the class.
 
 #### GetLink
 
-Will generate the right link for the right platform. (works actually only for ALDO)
+Will return the right column name from the spreadsheet depending on the platform.  
+(works actually only for ALDO)
 
 `getLink(url)`
 
 **Example:**
 
-> getLink(‘8 columns’)  
->  =\> adl-col8
+> link = getLink(cta_link)  
+
+if hybris
+	`cta_link = cta_link_hybris`
+else
+	`cta_link` 
