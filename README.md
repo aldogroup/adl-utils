@@ -1,265 +1,220 @@
-<h1 id="aldo-utilities">ALDO Utilities <a href="https://codeclimate.com/github/aldogroup/adl-utils"><img src="https://codeclimate.com/github/aldogroup/adl-utils/badges/gpa.svg" alt="Code Climate" title=""></a> <a href="https://codeclimate.com/github/aldogroup/adl-utils"><img src="https://codeclimate.com/github/aldogroup/adl-utils/badges/coverage.svg" alt="Test Coverage" title=""></a></h1>
+# ALDO Utilities [![Code Climate](https://codeclimate.com/github/aldogroup/adl-utils/badges/gpa.svg)](https://codeclimate.com/github/aldogroup/adl-utils) [![Test Coverage](https://codeclimate.com/github/aldogroup/adl-utils/badges/coverage.svg)](https://codeclimate.com/github/aldogroup/adl-utils)
 
-<div class="toc">
-    <ul>
-        <li><a href="#aldo-utilities">ALDO Utilities</a>
-            <ul>
-                <li><a href="#introduction">Introduction</a></li>
-                <li><a href="#installation">Installation</a></li>
-                <li><a href="#command-line">Command Line</a>
-                    <ul>
-                        <li><a href="#daemon">Daemon</a></li>
-                        <li><a href="#rebuild">Rebuild</a></li>
-                        <li><a href="#impex">Impex</a></li>
-                        <li><a href="#release">Release</a></li>
-                        <li><a href="#akamai-sync">Akamai Sync</a></li>
-                    </ul>
-                </li>
-                <li><a href="#helpers">Helpers</a></li>
-                    <ul>
-                        <li><a href="#price-formatter">Price formatter</a></li>
-                        <li><a href="#country-conditionals">Country conditionals</a></li>
-                        <li><a href="#page-classes">Page classes</a></li>
-                        <li><a href="#sanitize-clean">Sanitize clean</a></li>
-                        <li><a href="#supprice">Supprice</a></li>
-                        <li><a href="#convert-class">Convert class</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </li>
-    </ul>
-</div>
 
-<h2 id="introduction">Introduction</h2>
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Command Line](#command-line)
+  - 	[Daemon](#daemon)
+  -   [Rebuild](#rebuild)
+  -   [Impex](#impex)
+  -   [Release](#release)
+  -   [Akamai Sync](#akamai-sync)
 
-<p>A set of tools that we use at the ALDO Group for our Middleman applications. <br>
-Our goal is to create a common playground for centralizing our helpers and modules that we use everyday.</p>
+- [Helpers](#helpers)
+  -   [Price formatter](#price-formatter)
+  -   [Country conditionals](#country-conditionals)
+  -   [Page classes](#page-classes)
+  -   [Sanitize clean](#sanitize-clean)
+  -   [Supprice](#supprice)
+  -   [Convert class](#convert-class)
 
-<p><strong>List of features</strong></p>
+Introduction
+------------
 
-<ul>
-<li>Run Middleman as a Daemon (only unix based systems) (Still in Development)</li>
-<li>Tag our Git releases (Still in Development)</li>
-<li>Generate impex files for Hybris</li>
-<li>Cleanly restructure the build folder</li>
-<li>Sync with the Akamai server <br>
-<hr></li>
-</ul>
+A set of tools that we use at the ALDO Group for our Middleman applications.
+ Our goal is to create a common playground for centralizing our helpers and modules that we use everyday.
 
+**List of features**
 
+-   Run Middleman as a Daemon (only unix based systems) (Still in Development)
+-   Tag our Git releases (Still in Development)
+-   Generate impex files for Hybris
+-   Cleanly restructure the build folder
+-   Sync with the Akamai server
 
-<h2 id="installation">Installation</h2>
+* * * * *
 
-<p>Add the following to your Gemfile: <br>
-<code>gem 'adl-utils', :git =&gt; 'https://github.com/aldogroup/adl-utils'</code></p>
+Installation
+------------
 
-<p>Then simply run <code>bundle install</code> to install/update the gems.</p>
+Add the following to your Gemfile:
+ `gem 'adl-utils', :git => 'https://github.com/aldogroup/adl-utils'`
 
-<p>In order to use middleman with the multiple environments and platforms easily, you can use these: <br>
-<a href="https://gist.github.com/blabassi/8b0cd7e46794ca306e2f">aliases</a> (highly recommanded but not mandatory) <br>
-Add them to your <code>~/.zshrc</code> or <code>~/.bashrc</code> file. You will be able to start middleman with: <br>
-- <code>icongo</code> Create Aliases for Middleman in dev environment for Icongo Platform <br>
-- <code>hybris</code> Create Aliases for Middleman in dev environment for Hybris Platform <br>
-- <code>icongo-staging</code> Create Aliases for Middleman in staging environment for Icongo Platform <br>
-- <code>hybris-staging</code> Create Aliases for Middleman in staging environment for Hybris Platform <br>
-- <code>icongo-prod</code> Create Aliases for Middleman in production environment for Icongo Platform <br>
-- <code>hybris-prod</code> Create Aliases for Middleman in production environment for Hybris Platform</p>
+Then simply run `bundle install` to install/update the gems.
 
-<hr>
+In order to use middleman with the multiple environments and platforms easily, you can use these:
+ [aliases](https://gist.github.com/blabassi/8b0cd7e46794ca306e2f) (highly recommended but not mandatory)
+ Add them to your `~/.zshrc` or `~/.bashrc` file. You will be able to start middleman with:
+ - `icongo` Create Aliases for Middleman in dev environment for Icongo Platform
+ - `hybris` Create Aliases for Middleman in dev environment for Hybris Platform
+ - `icongo-staging` Create Aliases for Middleman in staging environment for Icongo Platform
+ - `hybris-staging` Create Aliases for Middleman in staging environment for Hybris Platform
+ - `icongo-prod` Create Aliases for Middleman in production environment for Icongo Platform
+ - `hybris-prod` Create Aliases for Middleman in production environment for Hybris Platform
 
+* * * * *
 
+Command Line
+------------
 
-<h2 id="command-line">Command Line</h2>
+### Daemon
 
+**Usage:**
+ `middleman daemon [--options]`
 
+**Options:**
+ `--start` Run Middleman as a daemon  
+ `--restart` Restart the Middleman daemon  
+ `--stop` Stop the Middleman daemon
 
-<h3 id="daemon">Daemon</h3>
+**Example:**
+ `middleman daemon --start`  
 
-<p><strong>Usage:</strong> <br>
-<code>middleman daemon [--options]</code></p>
+Given this example, we boot up a Middleman daemon. You can also restart and stop the daemon.
 
-<p><strong>Options:</strong> <br>
-<code>[--start]</code> Run Middleman as a daemon <br> <br>
-<code>[--restart]</code> Restart the Middleman daemon <br> <br>
-<code>[--stop]</code>  Stop the Middleman daemon</p>
+* * * * *
 
-<p><strong>Example:</strong> <br>
-<code>middleman daemon --start</code></p>
+### Rebuild
 
-<p>Given this example, we boot up a Middleman daemon. You can also restart and stop the daemon.</p>
+**Usage:**  
+ `middleman rebuild [--options]`
 
-<hr>
+**Options:**  
+ `-e, [--environment=ENVIRONMENT]` The environment to rebuild (Default: 'dev')  
+ `-p, [--platform=PLATFORM]` The platform that we want to rebuild (icongo or hybris) (Default: ‘icongo’)
 
+**Example:**
+ `middleman rebuild -e prod -p hybris`
 
+Given this example, we restructure the Hybris production build folder generated by Middleman.
 
-<h3 id="rebuild">Rebuild</h3>
+* * * * *
 
-<p><strong>Usage:</strong> <br>
-<code>middleman rebuild [--options]</code></p>
+### Impex
 
-<p><strong>Options:</strong> <br>
-<code>-e, [--environment=ENVIRONMENT]</code> The environment to rebuild (Default: ‘dev’) <br> <br>
-<code>-p, [--platform=PLATFORM]</code> The platform that we want to rebuild (icongo or hybris) (Default: ‘icongo’)</p>
+This command will generate impex files from your build directory.
 
-<p><strong>Example:</strong> <br>
-<code>middleman rebuild -e prod -p hybris</code></p>
+**Usage:**
+ `middleman impex [--options]`
 
-<p>Given this example, we restructure the Hybris production build folder generated by Middleman.</p>
+**Without options:**
+ It will only generate the impex that goes for the PCM (Landing Pages & Content Pages).  
+ It will generate the impex scheduled version that will need to be uploaded first and also the confirm version that will need to be upload after (when the campaign goes live).
 
-<hr>
+**Example of file generated:**  
+ `14-08-11_17.12_fall-winter-confirm-on-12-08-2014_14.30.00_ca.impex`  
+ `14-08-11_17.12_fall-winter-scheduled-for-12-08-2014_13.30.00_ca.impex`
 
+**Options:**  
+ `--homepage` Will generate impex for the homepage without time restriction.  
+ `--l3` Will generate all the level3 pages (they need to be build before running this command).
 
+**Example:**  
+ `middleman impex -b -e staging`  
 
-<h3 id="impex">Impex</h3>
+Given this example, Middleman will build the project and generate the impex files for our staging environment.
 
-<p>This command will generate impex files from your build directory.  </p>
+* * * * *
 
-<p><strong>Usage:</strong> <br>
-<code>middleman impex [--options]</code>  </p>
+### Release
 
-<p><strong>Without options:</strong> <br>
-It will only generate the impex that goes for the PCM (Landing Pages &amp; Content Pages). <br>
-It will generate the impex scheduled version that will need to be uploaded first and also the confirm version that will need to be upload after (when the campaign goes live).  </p>
+**Usage:**
+ `middleman release [--options]`
 
-<p><strong>Example of file generated:</strong> <br>
-<code>14-08-11_17.12_fall-winter-confirm-on-12-08-2014_14.30.00_ca.impex</code> <br>
-<code>14-08-11_17.12_fall-winter-scheduled-for-12-08-2014_13.30.00_ca.impex</code>  </p>
+**Options:**
+ `-b` Run the Middleman build command before creating the release
+ `-e` Specify the environment for the release (Default: ‘dev’)
+ `-p` The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)\`
 
-<p><strong>Options:</strong> <br>
-<code>--homepage</code> Will generate impex for the homepage without time restriction. <br>
-<code>--l3</code> Will generate all the level3 pages (they need to be build before running this command).</p>
+**Example:**
+ `middleman release -b -e prod -p hybris`
 
-<p><strong>Example:</strong> <br>
-<code>middleman impex -b -e staging</code>  </p>
+Given this example, Middleman will tag a release for production on our Hybris platform.
 
-<p>Given this example, Middleman will build the project and generate the impex files for our staging environment.</p>
+* * * * *
 
-<hr>
+### Akamai Sync
 
+**Usage:**
+ `middleman akamai_sync [--options]`
 
+**Options:**
+ `-b` Run the Middleman build command before creating the release
+ `-e` Specify environment for generating impex files (Default: ‘dev’)
+ `-p` The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)\`
 
-<h3 id="release">Release</h3>
+**Example:**
+ `middleman akamai_sync -b -e prod -p hybris`
 
-<p><strong>Usage:</strong> <br>
-<code>middleman release [--options]</code></p>
+Given this example, Middleman will sync with our Akamai server for production on our Hybris platform.
 
-<p><strong>Options:</strong> <br>
-<code>-b</code> Run the Middleman build command before creating the release <br> <br>
-<code>-e</code> Specify the environment for the release (Default: ‘dev’) <br> <br>
-<code>-p</code> The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)`</p>
+* * * * *
 
-<p><strong>Example:</strong> <br>
-<code>middleman release -b -e prod -p hybris</code></p>
+Helpers
+-------
 
-<p>Given this example, Middleman will tag a release for production on our Hybris platform.</p>
+#### Price formatter
 
-<hr>
+Automatically formats the price depending on the locale.
 
+`format_price(price_value)`
 
+#### Country conditionals
 
-<h3 id="akamai-sync">Akamai Sync</h3>
+Helps to specify country specific logic using conditionals.
 
-<p><strong>Usage:</strong> <br>
-<code>middleman akamai_sync [--options]</code></p>
+-   US: `is_us`
+-   CA: `is_ca`
+-   CA-ENG: `is_ca('en')`
+-   CA-FRE: `is_ca('fr')`
+-   UK: `is_uk`
 
-<p><strong>Options:</strong> <br>
-<code>-b</code> Run the Middleman build command before creating the release <br> <br>
-<code>-e</code> Specify environment for generating impex files (Default: ‘dev’) <br> <br>
-<code>-p</code> The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)`</p>
+For instance, if we want to include a module that is going to only be showcased on the US website, in our slim template, do this:
 
-<p><strong>Example:</strong> <br>
-<code>middleman akamai_sync -b -e prod -p hybris</code></p>
+``` {.prettyprint}
+- if is_us
+    / Include some US logic here /
+```
 
-<p>Given this example, Middleman will sync with our Akamai server for production on our Hybris platform.</p>
+#### Page classes
 
-<hr>
+Generates classes based on the page name and current locale.
 
+`page_class`
 
+#### Sanitize clean
 
-<h2 id="helpers">Helpers</h2>
+Will replace special characters with regular ones and replace spaces with dashes.
 
+`sanitize_clean(string)`
 
+**Example:**
 
-<h4 id="price-formatter">Price formatter</h4>
+> sanitize\_clean(‘spécial string’)
+>  =\> special-string
 
-<p>Automatically formats the price depending on the locale.</p>
+`newline2br(two_line_string)`
 
-<p><code>format_price(price_value)</code></p>
+Will check for `\n` inside the variable and replace it with a `<br />`.
 
+**Example:**
 
+> newline2br(‘this is an\\nexample’)
+>  =\> this is an`<br />`example
 
-<h4 id="country-conditionals">Country conditionals</h4>
+#### Supprice
 
-<p>Helps to specify country specific logic using conditionals.</p>
+Will search for a currency and wrap it inside a `<sup>` tag.
 
-<ul>
-<li>US: <code>is_us</code></li>
-<li>CA: <code>is_ca</code></li>
-<li>CA-ENG: <code>is_ca('en')</code></li>
-<li>CA-FRE: <code>is_ca('fr')</code></li>
-<li>UK: <code>is_uk</code></li>
-</ul>
+`supprice(price)`
 
-<p>For instance, if we want to include a module that is going to only be showcased on the US website, in our slim template, do this:</p>
+#### Convert class
 
+Will remove the ‘columns’ string and use the integer to generate the class.
 
+`convert_class(number of columns)`
 
-<pre class="prettyprint"><code class="language-ruby hljs ">- <span class="hljs-keyword">if</span> is_us
-    / <span class="hljs-constant">Include</span> some <span class="hljs-constant">US</span> logic here /</code></pre>
+**Example:**
 
-
-
-<h4 id="page-classes">Page classes</h4>
-
-<p>Generates classes based on the page name and current locale.</p>
-
-<p><code>page_class</code></p>
-
-
-
-<h4 id="sanitize-clean">Sanitize clean</h4>
-
-<p>Will replace special characters with regular ones and replace spaces with dashes.</p>
-
-<p><code>sanitize_clean(string)</code>    </p>
-
-<p><strong>Example:</strong></p>
-
-<blockquote>
-  <p>sanitize_clean(‘spécial string’) <br>
-  =&gt; special-string  </p>
-</blockquote>
-
-<p><code>newline2br(two_line_string)</code></p>
-
-<p>Will check for <code>\n</code> inside the variable and replace it with a <code>&lt;br /&gt;</code>.</p>
-
-<p><strong>Example:</strong></p>
-
-<blockquote>
-  <p>newline2br(‘this is an\nexample’) <br>
-  =&gt; this is an<code>&lt;br /&gt;</code>example</p>
-</blockquote>
-
-
-
-<h4 id="supprice">Supprice</h4>
-
-<p>Will search for a currency and wrap it inside a <code>&lt;sup&gt;</code> tag.</p>
-
-<p><code>supprice(price)</code></p>
-
-
-
-<h4 id="convert-class">Convert class</h4>
-
-<p>Will remove the ‘columns’ string and use the integer to generate the class.</p>
-
-<p><code>convert_class(number of columns)</code></p>
-
-<p><strong>Example:</strong>  </p>
-
-<blockquote>
-  <p>convert_class(‘8 columns’) <br>
-  =&gt; adl-col8</p>
-</blockquote>
+> convert\_class(‘8 columns’)  
+>  =\> adl-col8
