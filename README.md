@@ -122,8 +122,8 @@ Given this example, Middleman will build the project and generate the impex file
  `middleman release [--options]`
 
 **Options:**
- `-b` Run the Middleman build command before creating the release
- `-e` Specify the environment for the release (Default: ‘dev’)
+ `-b` Run the Middleman build command before creating the release  
+ `-e` Specify the environment for the release (Default: ‘dev’)  
  `-p` The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)\`
 
 **Example:**
@@ -139,9 +139,9 @@ Given this example, Middleman will tag a release for production on our Hybris pl
  `middleman akamai_sync [--options]`
 
 **Options:**
- `-b` Run the Middleman build command before creating the release
- `-e` Specify environment for generating impex files (Default: ‘dev’)
- `-p` The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)\`
+ `-b` Run the Middleman build command before creating the release  
+ `-e` Specify environment for generating impex files (Default: ‘dev’)  
+ `-p` The platform that we want to release for (icongo or hybris) (Default: ‘icongo’)\`  
 
 **Example:**
  `middleman akamai_sync -b -e prod -p hybris`
