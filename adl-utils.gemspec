@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.post_install_message = 'For more documentation you can go to:\n https://github.com/aldogroup/adl-utils/blob/new-impex/README.md'
+  s.post_install_message = 'For more documentation you can go to: https://github.com/aldogroup/adl-utils/blob/new-impex/README.md'
 
   # The version of middleman-core your extension depends on
   s.add_runtime_dependency("middleman-core", ["~> 3.0"])
