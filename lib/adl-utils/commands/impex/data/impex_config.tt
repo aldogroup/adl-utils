@@ -1,0 +1,41 @@
+####################################################
+#                    WCMS CONFIG                   #
+####################################################
+
+#### DO NOT MODIFY ####
+### Macros / Replacement Parameter definitions
+$contentCatalog=aldoCommerceContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog
+#### END DO NOT MODIFY ####
+
+
+#### CREATE COMPONENTS FOR HOME PAGE (header, content & footer) ####
+#### CMS Paragraph Components
+
+INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
+
+;;PermanentFooterHeadComponent;Permanent Footer Head Component;PermanentFooterHeadComponent;
+
+;;HeaderComponent_CA;Header Component for CA;HeaderComponent_CA;
+;;HomepageComponent_CA;Home Page Component for CA;HomepageComponent_CA;
+;;FooterComponent_CA;Footer Component for CA;FooterComponent_CA;
+
+;;HeaderComponent_US;Header Component for US;HeaderComponent_US;
+;;HomepageComponent_US;Home Page Component for US;HomepageComponent_US;
+;;FooterComponent_US;Footer Component for US;FooterComponent_US;
+
+;;HeaderComponent_UK;Header Component for UK;HeaderComponent_UK;
+;;HomepageComponent_UK;Home Page Component for UK;HomepageComponent_UK;
+;;FooterComponent_UK;Footer Component for UK;FooterComponent_UK;
+
+;;PermanentFooterComponent;Permanent Footer Component;PermanentFooterComponent;
+
+#### ADD THE ABOVE COMPONENTS TO THE RIGHT HOME PAGE PLACEHOLDERS ####
+#### Once you create the new paragraph component above,
+#### add it to the component list separated by a comma like I did with MegaPromoBanner2 below
+
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)
+;;HTMLHeaderSlot;Header Slot;true;PermanentFooterHeadComponent,HeaderComponent_CA,HeaderComponent_US,HeaderComponent_UK;
+;;Section1Slot-Homepage;Section1 Slot for Homepage;true;HomepageComponent_CA,HomepageComponent_US,HomepageComponent_UK;
+;;FooterSlot;Footer;true;PermanentFooterComponent,FooterComponent_CA,FooterComponent_US,FooterComponent_UK;

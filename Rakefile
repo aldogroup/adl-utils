@@ -1,3 +1,6 @@
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'bundler'
 Bundler::GemHelper.install_tasks
 
