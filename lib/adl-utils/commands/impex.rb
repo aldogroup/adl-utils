@@ -31,7 +31,8 @@ module Middleman
           locales: @mm.config[:hybris_locales],
           revision: @mm.revision,
           source_root: @mm.root,
-          impex_data: @mm.data.impex_data
+          impex_data: @mm.data.impex_data,
+          generate_l3: @mm.config.generate_l3
         }
       end
 
@@ -50,7 +51,8 @@ module Middleman
       namespace :impex
 
       desc 'impex', Middleman::ADLUTILS::IMPEX_DESC
-      method_option :homepage
+      method_option :homepage, :desc => 'Will generate impex for the homepage without time restriction.'
+      method_option :l3, :desc => 'Will generate all the level3 pages. (generate_l3 must be set to true in config.rb)'
       def impex
 
         if yes?('== Do you want to build your project first ?')
@@ -60,6 +62,9 @@ module Middleman
         if options[:homepage]
           require 'adl-utils/commands/impex/homepage'
           Middleman::Cli::HomepageImpex.new.homepage_impex
+        elsif options[:l3]
+          require 'adl-utils/commands/impex/level3'
+          Middleman::Cli::LevelThree.new.l3
         else
           require 'adl-utils/commands/impex/scheduled'
           Middleman::Cli::ScheduledImpex.new.shedimpex

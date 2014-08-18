@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.version     = Middleman::ADLUTILS::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["ALDO DIGITAL LAB"]
-  # s.email       = ["email@example.com"]
-  # s.homepage    = "http://example.com"
+  s.email       = ["aldodigitallab@gmail.com"]
+  s.homepage    = 'https://github.com/aldogroup/adl-utils'
   s.summary     = %q{A short summary of your extension}
   s.description = %q{A longer description of your extension}
 
@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+
+  s.post_install_message = 'For more documentation you can go to:\n https://github.com/aldogroup/adl-utils/blob/new-impex/README.md'
 
   # The version of middleman-core your extension depends on
   s.add_runtime_dependency("middleman-core", ["~> 3.0"])
