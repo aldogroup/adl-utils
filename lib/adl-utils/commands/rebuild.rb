@@ -40,8 +40,8 @@ module Middleman
       def build(options={})
 
         if yes?('== Do you want to build your project first ?')
-          revision = options['environment']
-          version = options['platform']
+          revision = options['environment'] || ENV['REV']
+          version = options['platform'] || ENV['VER']
           run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
         end
 
