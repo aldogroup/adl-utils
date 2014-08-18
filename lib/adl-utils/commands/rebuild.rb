@@ -1,6 +1,6 @@
 require 'middleman-core/cli'
 require 'thor'
-# require 'pry'
+require 'pry'
 require 'adl-utils/version'
 require 'expanded_date'
 
@@ -51,20 +51,20 @@ module Middleman
 
       def restructure(options={})
         puts "== Rebuilding"
-        revision = options['environment']
-        version = options['platform']
+        revision = options['environment'] || ENV['REV']
+        version = options['platform'] || ENV['VER']
         # Set variables
-        source_root = ENV['MM_ROOT']
-        build_folder  = 'build'
-        work_folder = 'rebuild'
-        locale_list   = %w(ca-eng ca-fre us uk)
+        source_root  = ENV['MM_ROOT']
+        build_folder = 'build'
+        work_folder  = 'rebuild'
+        locale_list  = %w(ca-eng ca-fre us uk)
 
         # Check to see if the build folder exists, kill if it doesn't
         unless File.directory?(build_folder)
           puts set_color '== The build folder does not exist', :red
           return
         end
-
+        binding.pry
         if Dir.exist?(work_folder)
           FileUtils.rm_rf work_folder
           directory(build_folder + "/#{revision}/#{version}", work_folder, {:verbose => false})
