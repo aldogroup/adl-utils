@@ -19,20 +19,10 @@ module Middleman
       end
 
       desc 'release [options]', Middleman::ADLUTILS::RELEASE_DESC
-      method_option 'build_before',
-                    :type     => :boolean,
-                    :aliases  => '-b',
-                    :desc     => 'Run \'middleman build\' before creating the release'
-      method_option 'environment',
-                    :default => 'dev',
-                    :aliases => '-e',
-                    :type     => :string,
-                    :desc     => 'Specify environment for the release(Default: dev)'
-      method_option 'platform',
-                    :aliases => '-p',
-                    :default => 'icongo',
-                    :type => :string,
-                    :desc => 'version (icongo or hybris)'
+      method_option 'build_before', type: :boolean, aliases: '-b', desc: 'Build before creating the release'
+      method_option 'environment', default: 'dev', aliases: '-e', type: :string, desc: 'Environment (Default: dev)'
+      method_option 'platform', aliases: '-p', default: 'icongo', type: :string, desc: 'version (icongo or hybris)'
+
       def release
         build_before(options)
         process
@@ -41,8 +31,7 @@ module Middleman
       protected
 
       def build_before(options={})
-        build_enabled = options['build_before']
-        if build_enabled
+        if options['build_before']
           # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
           revision = options['environment']
           version = options['platform']
