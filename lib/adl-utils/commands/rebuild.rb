@@ -20,15 +20,15 @@ module Middleman
 
       desc 'rebuild [options]', Middleman::ADLUTILS::REBUILD_DESC
       method_option 'environment',
-                    :aliases => '-e',
-                    :default => 'dev',
-                    :type => :string,
-                    :desc => 'Call rebuild task'
+                    aliases: '-e',
+                    default: 'dev',
+                    type: :string,
+                    desc: 'Call rebuild task'
       method_option 'platform',
-                    :aliases => '-p',
-                    :default => 'icongo',
-                    :type => :string,
-                    :desc => 'version (icongo or hybris)'
+                    aliases: '-p',
+                    default: 'icongo',
+                    type: :string,
+                    desc: 'version (icongo or hybris)'
 
       def rebuild
         build(options)
@@ -42,7 +42,7 @@ module Middleman
         if yes?('== Do you want to build your project first ?')
           revision = options['environment'] || ENV['REV']
           version = options['platform'] || ENV['VER']
-          run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
+          run("VER=#{version} REV=#{revision} middleman build --clean", {verbose: false}) || exit(1)
         end
 
       end
@@ -57,7 +57,7 @@ module Middleman
         source_root  = ENV['MM_ROOT']
         build_folder = 'build'
         work_folder  = 'rebuild'
-        locale_list  = %w(ca-eng ca-fre us uk)
+        #locale_list  = %w(ca-eng ca-fre us uk)
 
         # Check to see if the build folder exists, kill if it doesn't
         unless File.directory?(build_folder)
@@ -67,9 +67,9 @@ module Middleman
         binding.pry
         if Dir.exist?(work_folder)
           FileUtils.rm_rf work_folder
-          directory(build_folder + "/#{revision}/#{version}", work_folder, {:verbose => false})
+          directory(build_folder + "/#{revision}/#{version}", work_folder, {verbose: false})
         else
-          directory(build_folder + "/#{revision}/#{version}", work_folder, {:verbose => false})
+          directory(build_folder + "/#{revision}/#{version}", work_folder, {verbose: false})
         end
         # Change to build > revision > version directory
         Dir.chdir(work_folder)

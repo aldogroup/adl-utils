@@ -20,16 +20,16 @@ module Middleman
           @config = config
 
           # =>  Read page and get content
-          append_to_file @confirm_file, :verbose => false do
+          append_to_file @confirm_file, verbose: false do
             "# Landing Pages & Category Banner\n$lang=#{config[:lang]}\n$productCatalog=#{config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n"
             end
-          append_to_file(@confirm_file, "#end content\n", :verbose => false)
-          
-          append_to_file(@confirm_file, "#end subs\n", :verbose => false)
+          append_to_file(@confirm_file, "#end content\n", verbose: false)
+
+          append_to_file(@confirm_file, "#end subs\n", verbose: false)
 
           if locale == 'ca_en'
-            append_to_file(@confirm_file, "#ca_fr\n", :verbose => false)
-            append_to_file(@confirm_file, "#sub_fr\n", :verbose => false)
+            append_to_file(@confirm_file, "#ca_fr\n", verbose: false)
+            append_to_file(@confirm_file, "#sub_fr\n", verbose: false)
           end
 
           config[:impex_data].to_a.each do |page|
@@ -56,11 +56,11 @@ module Middleman
 
         def landing_page_impex(file_destination, page={}, content)
           if content.include?('ca_fr')
-            insert_into_file file_destination, :after => "#ca_fr\n", :verbose => false do
+            insert_into_file file_destination, after: "#ca_fr\n", verbose: false do
               "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
             end
           else
-            insert_into_file file_destination, :before => "#end content", :verbose => false do
+            insert_into_file file_destination, before: "#end content", verbose: false do
               "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
             end
           end
@@ -68,11 +68,11 @@ module Middleman
 
         def category_banner_impex(file_destination, page={}, content)
           if content.include?('ca_fr')
-            insert_into_file file_destination, :after => "#ca_fr\n", :verbose => false do
+            insert_into_file file_destination, after: "#ca_fr\n", verbose: false do
               "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
             end
           else
-            insert_into_file file_destination, :before => "#end content", :verbose => false do
+            insert_into_file file_destination, before: "#end content", verbose: false do
               "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
             end
           end
@@ -106,15 +106,15 @@ module Middleman
               sub_content_page =impexify_content(File.read(sub_content))
 
               if sub_page['type'] == 'LANDING_PAGE'
-                insert_into_file confirm_file, :before => "#end subs\n", :verbose => false do
+                insert_into_file confirm_file, before: "#end subs\n", verbose: false do
                   "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\";\"\";\"\"\n"
                 end
               elsif sub_page['type'] == 'CATEGORY_BANNER'
-                insert_into_file confirm_file, :before => "#end subs\n", :verbose => false do
+                insert_into_file confirm_file, before: "#end subs\n", verbose: false do
                   "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;\"#{sub_content_page}\";\"\"\n"
                 end
               else
-                insert_into_file confirm_file, :before => "#end subs\n", :verbose => false do
+                insert_into_file confirm_file, before: "#end subs\n", verbose: false do
                   "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\"\n"
                 end
               end # End of check for page type inside sub_pages
@@ -129,7 +129,7 @@ module Middleman
           content_page = impexify_content(File.read(content))
 
           # Generate the rest of the content
-          insert_into_file confirm_file, :after => "#end subs\n", :verbose => false do
+          insert_into_file confirm_file, after: "#end subs\n", verbose: false do
             "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=fr];categoryBanner[lang=fr];scheduledContent(&Item)\n\n"
           end
 
@@ -152,15 +152,15 @@ module Middleman
 
             if sub_page['type'] == 'LANDING_PAGE'
               # say("Reading & Generating #{sub_page['page_title']} using #{sub_page['type']} template...", :yellow)
-              insert_into_file confirm_file, :after => "#sub_fr\n" , :verbose => false do
+              insert_into_file confirm_file, after: "#sub_fr\n" , verbose: false do
                 "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\";\"\";\"\"\n"
               end
             elsif sub_page['type'] == 'CATEGORY_BANNER'
-              insert_into_file confirm_file, :after => "#sub_fr\n" , :verbose => false do
+              insert_into_file confirm_file, after: "#sub_fr\n" , verbose: false do
                 "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;\"#{sub_content_page}\";\"\"\n"
               end
             else
-              insert_into_file confirm_file, :after => "#sub_fr\n" , :verbose => false do
+              insert_into_file confirm_file, after: "#sub_fr\n" , verbose: false do
                 "##{page['page_title']} #{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";\"#{sub_content_page}\"\n"
               end
             end # End of check for page type inside sub_pages

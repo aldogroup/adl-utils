@@ -3,9 +3,9 @@ AllCops:
     - '**/Rakefile'
     - '**/Gemfile'
   Exclude:
-    - 'lib/data/**/*'
-    - 'lib/methods/**/*'
-    - 'lib/strategies/**/*'
+    - 'lib/adl-utils/data/**/*'
+    - 'lib/adl-utils/methods/**/*'
+    - 'lib/adl-utils/strategies/**/*'
 DoubleNegation:
   Enabled: false
 LineLength:

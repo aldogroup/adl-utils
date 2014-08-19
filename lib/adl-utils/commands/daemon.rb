@@ -20,17 +20,17 @@ module Middleman
 
       desc 'daemon [options]', Middleman::ADLUTILS::DAEMON_DESC
       method_option 'start',
-                    :type => :boolean,
-                    :default => false,
-                    :desc => 'Start middleman as daemon'
+                    type: :boolean,
+                    default: false,
+                    desc: 'Start middleman as daemon'
       method_option 'stop',
-                    :type => :boolean,
-                    :default => false,
-                    :desc => 'stop the daemon'
+                    type: :boolean,
+                    default: false,
+                    desc: 'stop the daemon'
       method_option 'restart',
-                    :type => :boolean,
-                    :default => false,
-                    :desc => 'restart the daemon'
+                    type: :boolean,
+                    default: false,
+                    desc: 'restart the daemon'
       def daemon
         if options['stop']
           stop_daemon
@@ -53,16 +53,16 @@ module Middleman
 
         # godfile_template =
         puts set_color '== Starting Middleman with icongo settings using dev environment', :yellow
-        run("god start middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
+        run("god start middleman -c #{godfile_template}", {verbose: false}) || exit(1)
         puts set_color '== Middleman Server is running at: http://localhost:1337/', :green
       end
 
       def stop_daemon
-        run("god stop middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
+        run("god stop middleman -c #{godfile_template}", {verbose: false}) || exit(1)
       end
 
       def restart_daemon
-        run("god restart middleman -c #{godfile_template}", {:verbose => false}) || exit(1)
+        run("god restart middleman -c #{godfile_template}", {verbose: false}) || exit(1)
       end
     end
 

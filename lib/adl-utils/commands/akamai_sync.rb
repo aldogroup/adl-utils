@@ -34,7 +34,7 @@ module Middleman
         if yes?('== Do you want to build your project first ?')
           revision = options['environment']
           version = options['platform']
-          run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
+          run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
         end
       end
 
@@ -50,7 +50,6 @@ module Middleman
           files = Dir.glob('**/*', File::FNM_DOTMATCH)
           files.reject { |filename| filename =~ Regexp.new('\.$') }
         end
-
 
         def self.process(options={})
           extend Middleman

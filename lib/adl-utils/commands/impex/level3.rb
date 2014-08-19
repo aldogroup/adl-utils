@@ -83,17 +83,17 @@ module Middleman
         def generate_l3(locale, mm_config={})
           @locale = locale
           build_dir = Pathname.new("build/#{impexer_config[:revision]}/hybris/" + locale)
-          l3_build_dir = build_dir + '/l3'
+          # l3_build_dir = build_dir + '/l3'
           # =>  Create an array with all the directories inside the working dir
           l3_content_dir = Dir.glob(build_dir + 'l3/*')
           say("Generating L3 for #{locale}...", :yellow)
-          append_to_file(@impex_file, "\n#L3 Content Page\n", :verbose => false)
+          append_to_file(@impex_file, "\n#L3 Content Page\n", verbose: false)
           l3_content_dir.each do |l3_content|
             l3_hybris_page_name = l3_content.to_s.gsub(/\d{3,}-/, '').gsub(/\-/,' ').strip
             l3_hybris_id = l3_content.match(/\d{3,}/).to_s
             unless l3_hybris_id.empty?
               l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding("ASCII-8BIT")
-              append_to_file(@impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\";\"\"\n", :verbose => false)
+              append_to_file(@impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\";\"\"\n", verbose: false)
             end
           end
           say("\s\s Finished to generate the impex content files for #{locale}", :green)

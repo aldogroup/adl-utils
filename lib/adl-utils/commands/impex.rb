@@ -51,12 +51,12 @@ module Middleman
       namespace :impex
 
       desc 'impex', Middleman::ADLUTILS::IMPEX_DESC
-      method_option :homepage, :desc => 'Will generate impex for the homepage without time restriction.'
-      method_option :l3, :desc => 'Will generate all the level3 pages. (generate_l3 must be set to true in config.rb)'
+      method_option :homepage, desc: 'Will generate impex for the homepage without time restriction.'
+      method_option :l3, desc: 'Will generate all the level3 pages. (generate_l3 must be set to true in config.rb)'
       def impex
 
         if yes?('== Do you want to build your project first ?')
-          run("VER=hybris REV=#{ENV['REV']} middleman build --clean", {:verbose => false}) || exit(1)
+          run("VER=hybris REV=#{ENV['REV']} middleman build --clean", {verbose: false}) || exit(1)
         end
 
         if options[:homepage]

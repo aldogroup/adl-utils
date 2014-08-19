@@ -35,7 +35,7 @@ module Middleman
           # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
           revision = options['environment']
           version = options['platform']
-          run("VER=#{version} REV=#{revision} middleman build --clean", {:verbose => false}) || exit(1)
+          run("VER=#{version} REV=#{revision} middleman build --clean", {verbose: false}) || exit(1)
         end
       end
 

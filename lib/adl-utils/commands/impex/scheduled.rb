@@ -108,19 +108,19 @@ module Middleman
 
               unless mm_config[:country_code].include?('ca')
                 current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\"\n"
-                insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+                insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                   "#{current_sublp.force_encoding('ASCII-8BIT')}"
                 end
               end
 
               if sub_content.include?('ca_en')
                 current_sublp_fr = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\";\"#{sub_content_fr_page}\"\n"
-                insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+                insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                   "#{current_sublp_fr.force_encoding('ASCII-8BIT')}"
                 end
               end
 
-              insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
+              insert_into_file @impex_content_file, after: apply_restriction_config, verbose: false do
                 "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;;#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
               end
 
@@ -228,19 +228,19 @@ module Middleman
 
             unless mm_config[:country_code].include?('ca')
               page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\"\n"
-              insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+              insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
             end
 
             if content.include?('ca_en')
               page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{content_fr_page}\"\n"
-              insert_into_file @impex_content_file, :before => apply_restriction_config, verbose: false do
+              insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
             end
 
-            insert_into_file @impex_content_file, :after => apply_restriction_config, verbose: false do
+            insert_into_file @impex_content_file, after: apply_restriction_config, verbose: false do
               "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";#{impex_page['page_title']}#{mm_config[:week]};\n"
             end
 

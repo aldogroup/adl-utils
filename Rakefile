@@ -12,6 +12,6 @@ end
 
 require 'rake/clean'
 
-task :test => ['cucumber']
+task test: ['cucumber']
 
-task :default => :test
+task default: :test
