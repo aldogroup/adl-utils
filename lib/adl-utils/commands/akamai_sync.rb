@@ -6,7 +6,7 @@ require 'expanded_date'
 
 module Middleman
   module Cli
-    class Akamai_Sync < Thor
+    class AkamaiSync < Thor
       include Thor::Actions
 
       check_unknown_options!
@@ -19,20 +19,10 @@ module Middleman
       end
 
       desc 'akamai_sync [options]', Middleman::ADLUTILS::AKAMAI_DESC
-      method_option 'build_before',
-                    :type     => :boolean,
-                    :aliases  => "-b",
-                    :desc     => 'Run `middleman build` before creating the release'
-      method_option 'environment',
-                    :default => 'dev',
-                    :aliases => '-e',
-                    :type     => :string,
-                    :desc => 'Specify environment for the release(Default: dev)'
-      method_option 'platform',
-                    :aliases => '-p',
-                    :default => 'icongo',
-                    :type => :string,
-                    :desc => 'version (icongo or hybris)'
+      method_option 'build_before', type: :boolean, aliases: '-b', desc: 'Run `middleman build` before the release'
+      method_option 'environment', default: 'dev', aliases: '-e', type: :string, desc: 'Environment (Default: dev)'
+      method_option 'platform', aliases: '-p', default: 'icongo', type: :string, desc: 'version (icongo or hybris)'
+
       def akamai_sync
         build_before(options)
         FtpConfig.process(options)
@@ -58,7 +48,6 @@ module Middleman
 
         def self.filtered_files
           files = Dir.glob('**/*', File::FNM_DOTMATCH)
-
           files.reject { |filename| filename =~ Regexp.new('\.$') }
         end
 
