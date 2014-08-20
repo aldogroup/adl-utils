@@ -5,14 +5,14 @@ module Middleman
 
       app.helpers do
         def format_price(price)
-          (t(:lang).include? 'ca_fr') ? price + "&thinsp;$" : "$" + price
+          (t(:lang).include? 'ca_fr') ? price + '&thinsp;$' : '$' + price
         end
 
-        def is_ca(lang = "both")
+        def is_ca(lang = 'both')
           case lang
-          when "en"
+          when 'en'
             (t(:lang) == 'ca_en')
-          when "fr"
+          when 'fr'
             (t(:lang) == 'ca_fr')
           else
             (t(:lang) == 'ca_en' || t(:lang) == 'ca_fr')
@@ -23,44 +23,44 @@ module Middleman
           (t(:lang) == 'us_en_US')
         end
 
-        def slim_partial(name, options = {}, &block)
+        def slim_partial(name, options={}, &block)
           Slim::Template.new("#{name}.slim.erb", options).render(self, &block)
         end
 
         def page_class
-         current_resource.url.sub('.html', '').gsub('/', ' ')
+          current_resource.url.sub('.html', '').gsub('/', ' ')
         end
 
         def sanitize_clean(name)
-          return I18n.transliterate(name).downcase.gsub(/[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/,' ').gsub(/\s+/, '-').gsub(/[^a-z0-9_-]/, '').squeeze('-') unless(name.nil?)
+          I18n.transliterate(name).downcase.gsub(/[\`\~\!\@\#\$\%\^\&\*\(\)\-\=\_\+\[\]\\\;\'\,\.\/\{\}\|\:\"\<\>\?]/, ' ').gsub(/\s+/, '-').gsub(/[^a-z0-9_-]/, '').squeeze('-') unless name.nil?
         end
 
         def newline2br(longname)
-          return longname.gsub(/\n/, '<br/>')
+          longname.gsub(/\n/, '<br/>')
         end
 
         def newspan2br(longname)
-          return longname.gsub(/\n/, '</span><br/><span>')
+          longname.gsub(/\n/, '</span><br/><span>')
         end
 
         def supprice(text)
-          return text.gsub(/[\$\£]/, '<sup>\0</sup>')
+          text.gsub(/[\$\£]/, '<sup>\0</sup>')
         end
 
         def convert_class(width)
-          return 'adl-col' + width.chomp(' columns');
+          'adl-col' + width.chomp(' columns')
         end
 
         def getLink(link)
-          if version == "hybris"
-            return link + "_hybris"
+          if version == 'hybris'
+            link + '_hybris'
           else
-            return link
+            link
           end
         end
 
         def run_build
-          run("middleman build --clean") || exit(1)
+          run('middleman build --clean') || exit(1)
         end
       end
     end

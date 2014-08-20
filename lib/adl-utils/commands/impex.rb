@@ -5,11 +5,9 @@ require 'expanded_date'
 
 module Middleman
   module Cli
-
     class InitVar
-
       def upcase_strip(content)
-        (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/,'')
+        (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/, '')
       end
 
       def mm_instance
@@ -19,6 +17,7 @@ module Middleman
           config[:environment] = :build
         end
       end
+
       # define project variable
       def project_config
         mm_instance
@@ -40,7 +39,6 @@ module Middleman
         mm_instance
         return @mm.config
       end
-
     end
 
     class Impex < Thor
@@ -53,10 +51,10 @@ module Middleman
       desc 'impex', Middleman::ADLUTILS::IMPEX_DESC
       method_option :homepage, desc: 'Will generate impex for the homepage without time restriction.'
       method_option :l3, desc: 'Will generate all the level3 pages. (generate_l3 must be set to true in config.rb)'
-      def impex
 
+      def impex
         if yes?('== Do you want to build your project first ?')
-          run("VER=hybris REV=#{ENV['REV']} middleman build --clean", {verbose: false}) || exit(1)
+          run("VER=hybris REV=#{ENV['REV']} middleman build --clean", verbose: false) || exit(1)
         end
 
         if options[:homepage]

@@ -6,11 +6,8 @@ require 'expanded_date'
 
 module Middleman
   module Cli
-
     class ScheduledImpex < Thor
-
       no_commands do
-
         def mm_config
           InitVar.new.project_config
         end
@@ -19,14 +16,12 @@ module Middleman
           GenerateScheduled.new.generate_scheduled(mm_config)
         end
       end
-
     end
 
     class GenerateScheduled < Thor
       include Thor::Actions
 
       no_commands do
-
         def reset_var
           @mm_config.delete(:country_code)
           @mm_config.delete(:lang)
@@ -60,9 +55,7 @@ module Middleman
         end
 
         def content_var(mm_config={}, locale)
-
           impex_property = Hash.new
-
           if locale == 'ca_en'
             impex_property[:country_code] = 'ca'
             impex_property[:date_hour] = "#{mm_campaign_start['ca'][0]} #{mm_campaign_start['ca'][1]}"
@@ -91,11 +84,10 @@ module Middleman
           restriction_config << '#You can also put in a current (not time restricted) landing page or banner'
           restriction_config << 'UPDATE Category;$catalogVersion;code[unique=true];scheduledContent(&Item)'
           restriction_config << "\n"
-          return restriction_config.join("\n")
+          restriction_config.join("\n")
         end
 
         def leveltwo_routine(impex_page, locale)
-
           build_dir = Pathname.new("build/#{mm_config[:revision]}/hybris/" + locale)
 
           if File.exist?(File.join(build_dir.to_s, impex_page['sub_pages'][0]['page_file']))
@@ -140,7 +132,7 @@ module Middleman
         end
 
         def new_last_campaign_end(date)
-          (DateTime.parse(date) - ((0.01 / 24)/36)).strftime('%d.%m.%Y %H:%M:%S')
+          (DateTime.parse(date) - ((0.01 / 24) / 36)).strftime('%d.%m.%Y %H:%M:%S')
         end
 
         def pretty_golive
@@ -191,9 +183,7 @@ module Middleman
 
         # Still Works needs to be done here (Method is too long)
         def generate_content(locale)
-
           say("\n\n Generating impex content files for #{country_code}", :blue)
-
           build_dir = Pathname.new("build/#{mm_config[:revision]}/hybris/" + locale)
 
           # Read page and get content
@@ -203,7 +193,6 @@ module Middleman
 
             content = File.join(build_dir, impex_page['page_file'])
             content_page = File.read(content)
-
             content_fr = fr_swap(content)
             content_fr_page = page_fr(content_fr)
 
@@ -249,11 +238,9 @@ module Middleman
           end # End of impex_pages loop
 
           throw :done
-
         end # End of the generate method
 
       end
-
     end
   end
 end

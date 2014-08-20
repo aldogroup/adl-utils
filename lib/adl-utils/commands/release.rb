@@ -33,9 +33,9 @@ module Middleman
       def build_before(options={})
         if options['build_before']
           # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
-          revision = options['environment']
-          version = options['platform']
-          run("VER=#{version} REV=#{revision} middleman build --clean", {verbose: false}) || exit(1)
+          revision  = options['environment']
+          version   = options['platform']
+          run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
         end
       end
 
@@ -50,11 +50,10 @@ module Middleman
         say 'Pushing to github...'
         release_version = ask('Specify a release version (needs to be formated like vx.x.x where x is a numeric value): ')
         description_raw = ask('Please type a description: ')
-        description = description_raw.gsub(/\n/,'"\0"')
+        description = description_raw.gsub(/\n/, '"\0"')
         run(`git tag -a v#{release_version} -m "#{description}"`)
         run("git push origin v#{release_version}")
       end
-
     end
   end
 end

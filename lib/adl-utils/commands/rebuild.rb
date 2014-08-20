@@ -19,16 +19,8 @@ module Middleman
       end
 
       desc 'rebuild [options]', Middleman::ADLUTILS::REBUILD_DESC
-      method_option 'environment',
-                    aliases: '-e',
-                    default: 'dev',
-                    type: :string,
-                    desc: 'Call rebuild task'
-      method_option 'platform',
-                    aliases: '-p',
-                    default: 'icongo',
-                    type: :string,
-                    desc: 'version (icongo or hybris)'
+      method_option 'environment', aliases: '-e', default: 'dev', type: :string, desc: 'Call rebuild task'
+      method_option 'platform', aliases: '-p', default: 'icongo', type: :string, desc: 'version (icongo or hybris)'
 
       def rebuild
         build(options)
@@ -38,38 +30,36 @@ module Middleman
       protected
 
       def build(options={})
-
         if yes?('== Do you want to build your project first ?')
           revision = options['environment'] || ENV['REV']
           version = options['platform'] || ENV['VER']
-          run("VER=#{version} REV=#{revision} middleman build --clean", {verbose: false}) || exit(1)
+          run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
         end
-
       end
 
       source_root ENV['MM_ROOT']
 
       def restructure(options={})
-        puts "== Rebuilding"
+        puts '== Rebuilding'
         revision = options['environment'] || ENV['REV']
         version = options['platform'] || ENV['VER']
         # Set variables
-        source_root  = ENV['MM_ROOT']
+        source_root = ENV['MM_ROOT']
         build_folder = 'build'
-        work_folder  = 'rebuild'
-        #locale_list  = %w(ca-eng ca-fre us uk)
+        work_folder = 'rebuild'
+        # locale_list  = %w(ca-eng ca-fre us uk)
 
         # Check to see if the build folder exists, kill if it doesn't
         unless File.directory?(build_folder)
           puts set_color '== The build folder does not exist', :red
           return
         end
-        binding.pry
+        # binding.pry
         if Dir.exist?(work_folder)
           FileUtils.rm_rf work_folder
-          directory(build_folder + "/#{revision}/#{version}", work_folder, {verbose: false})
+          directory(build_folder + "/#{revision}/#{version}", work_folder, verbose: false)
         else
-          directory(build_folder + "/#{revision}/#{version}", work_folder, {verbose: false})
+          directory(build_folder + "/#{revision}/#{version}", work_folder, verbose: false)
         end
         # Change to build > revision > version directory
         Dir.chdir(work_folder)
@@ -79,7 +69,7 @@ module Middleman
         directory_list = directory_list.reject { |fn| fn == 'assets' }
 
         # Delete the sitemap file
-        if File.exists?('index.html')
+        if File.exist?('index.html')
           File.delete('index.html')
         end
 
@@ -96,7 +86,7 @@ module Middleman
           page_folders.each do |page|
 
             # Search for the index.html file
-            page_folder = File.join(locale_folder,page)
+            page_folder = File.join(locale_folder, page)
             Dir.chdir(page_folder)
             Dir.glob('*').each do |f|
               if ['.', '..'].include?(f)
@@ -112,7 +102,7 @@ module Middleman
                   else
                     Dir.chdir(File.join(page_folder, sf))
                     current_file = File.join(Dir.getwd, Dir.glob('*'))
-                    new_filename = work_folder + '/' + page + '-' + sf + '_' + folder  + '.html'
+                    new_filename = work_folder + '/' + page + '-' + sf + '_' + folder + '.html'
                     copy_file current_file, new_filename
                   end
                 end
@@ -131,7 +121,7 @@ module Middleman
 
         end
 
-        #Cleanup folders
+        # Cleanup folders
         Dir.chdir(File.join(source_root, work_folder))
         directory_list.each do |rfolder|
           trash_folder = File.join(source_root, work_folder + '/' + rfolder)

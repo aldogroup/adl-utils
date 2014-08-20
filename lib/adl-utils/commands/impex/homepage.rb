@@ -4,11 +4,8 @@ require 'adl-utils/version'
 
 module Middleman
   module Cli
-
     class HomepageImpex < Thor
-
       no_commands do
-
         def mm_config
           InitVar.new.homepage_config
         end
@@ -17,7 +14,6 @@ module Middleman
           GenerateHomepage.new.generate_config(mm_config)
         end
       end
-
     end
 
     class GenerateHomepage < Thor
@@ -31,7 +27,7 @@ module Middleman
         end
 
         def upcase_strip(content)
-          (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/,'')
+          (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/, '')
         end
 
         def gentime
@@ -43,7 +39,7 @@ module Middleman
         end
 
         def template_source
-          File.join( @template_dir + 'impex_content.erb')
+          File.join(@template_dir + 'impex_content.erb')
         end
 
         def homepage_filepath(dir)
@@ -71,15 +67,13 @@ module Middleman
         end
 
         def content_var(mm_config={}, locale)
-
           impex_property = Hash.new
-
           config = {
-              build_dir: mm_config.build_dir,
-              season: mm_config.season,
-              campaign: mm_config.campaign,
-              week: upcase_strip(mm_config.campaign),
-              locales: mm_config[:hybris_locales],
+            build_dir: mm_config.build_dir,
+            season: mm_config.season,
+            campaign: mm_config.campaign,
+            week: upcase_strip(mm_config.campaign),
+            locales: mm_config[:hybris_locales]
           }
 
           if locale.to_s.include?('ca_en')
@@ -103,10 +97,10 @@ module Middleman
         def generate_config(mm_config={})
           Middleman::Cli::GenerateHomepage.source_root('../')
           @template_dir = File.join(File.dirname(__FILE__), '/data/')
-          @campaign =  mm_config[:campaign]
+          @campaign = mm_config[:campaign]
           output_file = "#{output_dir}/#{gentime}_#{@campaign}_config.impex"
           say("\n══ Generating impex config file", :green)
-          copy_file(File.join( @template_dir + 'impex_config.tt'), output_file)
+          copy_file(File.join(@template_dir + 'impex_config.tt'), output_file)
           mm_config[:hybris_locales].each do |loc|
             next if loc.to_s == 'ca_fr'
             content_var(mm_config, loc)
@@ -120,11 +114,10 @@ module Middleman
           opts = Hash.new
           opts[:head_content] = head_content(build_dir)
           opts[:homepage_content] = impexify_content(File.read(homepage_filepath(build_dir)))
-          opts[:homepage_content_fr] = page_fr(fr_swap(homepage_filepath(build_dir))) if locale.to_s =='ca_en'
+          opts[:homepage_content_fr] = page_fr(fr_swap(homepage_filepath(build_dir))) if locale.to_s == 'ca_en'
           opts[:footer_content] = footer_content(build_dir)
           template(template_source, impex_homepage_file, mm_config.merge(opts))
         end
-
       end
     end
   end

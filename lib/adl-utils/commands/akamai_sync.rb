@@ -41,6 +41,7 @@ module Middleman
       class FtpConfig < Middleman::Extension
         require 'middleman-core'
         require 'net/ftp'
+
         def initialize(app, options_hash={}, &block)
           # Call super to build options from the options_hash
           super
@@ -98,8 +99,8 @@ module Middleman
         end
 
         def self.handle_dir_exception(exception, ftp, dirname)
-          reply     = exception.message
-          err_code  = reply[0,3].to_i
+          reply = exception.message
+          err_code = reply[0, 3].to_i
           if err_code == 550
             ftp.mkdir(dirname)
             puts "Created #{dirname} directory"
@@ -108,8 +109,8 @@ module Middleman
         end
 
         def self.handle_exception(exception, ftp, filename)
-          reply     = exception.message
-          err_code  = reply[0,3].to_i
+          reply = exception.message
+          err_code = reply[0, 3].to_i
 
           if err_code == 550
             if File.binary?(filename)
@@ -137,7 +138,6 @@ module Middleman
           rescue
           end
         end
-
       end
     end
   end

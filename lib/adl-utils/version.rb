@@ -1,6 +1,6 @@
 module Middleman
   module ADLUTILS
-    PACKAGE = "adl-utils"
+    PACKAGE = 'adl-utils'
     VERSION = '0.7.0'
     TAGLINE = 'Set of tools for ALDO Group to be used with middleman'
     AKAMAI_DESC = 'Deploy assets folder directly to Akamai FTP'
