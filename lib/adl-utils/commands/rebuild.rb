@@ -30,7 +30,9 @@ module Middleman
       protected
 
       def revision
-        options['environment'] || ENV['REV']
+        rev = options['environment'] || ENV['REV']
+        rev = 'dev' if rev.nil?
+        rev
       end
 
       def version
@@ -51,12 +53,8 @@ module Middleman
           return
         end
 
-        if Dir.exist?(work_folder)
-          FileUtils.rm_rf work_folder
-          directory(build_folder + "/#{revision}/#{version}", work_folder, verbose: false)
-        else
-          directory(build_folder + "/#{revision}/#{version}", work_folder, verbose: false)
-        end
+        FileUtils.rm_rf work_folder if Dir.exist?(work_folder)
+        directory(build_folder + "/#{revision}/#{version}", work_folder, verbose: false)
       end
 
       def cleanup(directory_list)
@@ -78,50 +76,55 @@ module Middleman
       def dirswitch(folder)
         locale_folder = File.join(sourceroot, work_folder + '/' + folder)
         Dir.chdir(locale_folder)
-        homepage_file = File.join(Dir.getwd, Dir.glob('*.html'))
-        copy_file homepage_file, work_folder + '/homepage_' + folder + '.html'
-        page_folders
+        Dir.glob('*.html').each do |page|
+          homepage_file = File.join(Dir.getwd, page)
+          copy_file homepage_file, output_homepage(work_folder, page, folder)
+          page_folders
+        end
+      end
+
+      def output_homepage(work_folder, page, folder)
+        if page.include?('index.html')
+          work_folder + '/homepage_' + folder + '.html'
+        else
+          work_folder + '/' + page.chomp('.html') + '_' + folder + '.html'
+        end
       end
 
       def page_folders
         Dir.glob('*').select { |fn| File.directory?(fn) }
       end
 
-      def searchrename(locale_folder, page)
+      def searchrename(locale_folder, page, folder)
         # Search for the index.html file
         page_folder = File.join(locale_folder, page)
         Dir.chdir(page_folder)
         Dir.glob('*').each do |f|
-          if %w('.' '..').include?(f)
-            next
-          end
+          next if %w('.' '..').include?(f)
           current_dir = Dir.glob('*')
-          rebuildfolder(current_dir)
+          rebuildfolder(current_dir, page, folder)
         end
       end
 
-      def rebuildfolder(current_dir)
-        if current_dir.length > 1
-          subfolder(current_dir)
-        else
-          current_file = File.join(Dir.getwd, Dir.glob('*'))
+      def rebuildfolder(current_dir, page, folder)
+        current_dir.each { |sf| subfolder(sf, page, folder) } if current_dir.length > 1
+        current_file = File.join(Dir.getwd, Dir.glob('*'))
+        new_filename = work_folder + '/' + page + '_' + folder + '.html'
+        copy_file current_file, new_filename
+      end
+
+      def subfolder(sf, page, folder)
+        if File.extname(sf) == '.html'
           new_filename = work_folder + '/' + page + '_' + folder + '.html'
+          sf = work_folder + '/' + folder + '/' + sf
+          copy_file sf, new_filename
+        else
+          # filepath = File.join(Dir.getwd, File.join(page, sf))
+          Dir.chdir(sf)
+          current_file = File.join(Dir.getwd, Dir.glob('*'))
+          new_filename = work_folder + '/' + page + '-' + sf + '_' + folder + '.html'
           copy_file current_file, new_filename
-        end
-      end
-
-      def subfolder(current_dir)
-        current_dir.each do |sf|
-          if File.extname(sf) == '.html'
-            new_filename = work_folder + '/' + page + '_' + folder + '.html'
-            sf = work_folder + '/' + folder + '/' + sf
-            copy_file sf, new_filename
-          else
-            Dir.chdir(File.join(page_folder, sf))
-            current_file = File.join(Dir.getwd, Dir.glob('*'))
-            new_filename = work_folder + '/' + page + '-' + sf + '_' + folder + '.html'
-            copy_file current_file, new_filename
-          end
+          Dir.chdir('..')
         end
       end
 
@@ -146,14 +149,12 @@ module Middleman
 
         # Loop through all locales folders
         directory_list.each do |folder|
-
+          locale_folder = File.join(sourceroot, work_folder + '/' + folder)
           # Switch into the current locale directory
           dirswitch(folder)
 
           # Loop over each page folder
-          page_folders.each do |page|
-            searchrename(locale_folder, page)
-          end
+          page_folders.each { |page| searchrename(locale_folder, page, folder) }
 
           # Go back to list of locales
           Dir.chdir('..')

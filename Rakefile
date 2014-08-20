@@ -1,4 +1,5 @@
 require "codeclimate-test-reporter"
+SimpleCov.command_name 'Unit Tests'
 CodeClimate::TestReporter.start
 
 require 'bundler'
