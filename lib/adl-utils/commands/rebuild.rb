@@ -92,26 +92,34 @@ module Middleman
         page_folder = File.join(locale_folder, page)
         Dir.chdir(page_folder)
         Dir.glob('*').each do |f|
-          if ['.', '..'].include?(f)
+          if %w('.' '..').include?(f)
             next
           end
           current_dir = Dir.glob('*')
-          if current_dir.length > 1
-            current_dir.each do |sf|
-              if File.extname(sf) == '.html'
-                new_filename = work_folder + '/' + page + '_' + folder + '.html'
-                sf = work_folder + '/' + folder + '/' + sf
-                copy_file sf, new_filename
-              else
-                Dir.chdir(File.join(page_folder, sf))
-                current_file = File.join(Dir.getwd, Dir.glob('*'))
-                new_filename = work_folder + '/' + page + '-' + sf + '_' + folder + '.html'
-                copy_file current_file, new_filename
-              end
-            end
-          else
-            current_file = File.join(Dir.getwd, Dir.glob('*'))
+          rebuildfolder(current_dir)
+        end
+      end
+
+      def rebuildfolder(current_dir)
+        if current_dir.length > 1
+          subfolder(current_dir)
+        else
+          current_file = File.join(Dir.getwd, Dir.glob('*'))
+          new_filename = work_folder + '/' + page + '_' + folder + '.html'
+          copy_file current_file, new_filename
+        end
+      end
+
+      def subfolder(current_dir)
+        current_dir.each do |sf|
+          if File.extname(sf) == '.html'
             new_filename = work_folder + '/' + page + '_' + folder + '.html'
+            sf = work_folder + '/' + folder + '/' + sf
+            copy_file sf, new_filename
+          else
+            Dir.chdir(File.join(page_folder, sf))
+            current_file = File.join(Dir.getwd, Dir.glob('*'))
+            new_filename = work_folder + '/' + page + '-' + sf + '_' + folder + '.html'
             copy_file current_file, new_filename
           end
         end
