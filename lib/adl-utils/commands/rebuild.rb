@@ -37,7 +37,7 @@ module Middleman
         options['platform'] || ENV['VER']
       end
 
-      def build(options={})
+      def build(_options={})
         if yes?('== Do you want to build your project first ?')
           run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
         end
@@ -114,25 +114,21 @@ module Middleman
             new_filename = work_folder + '/' + page + '_' + folder + '.html'
             copy_file current_file, new_filename
           end
-
         end
       end
 
-      def restructure(options={})
+      def restructure(_options={})
         puts '== Rebuilding'
-        # Set variables
-        source_root = ENV['MM_ROOT']
-        build_folder = 'build'
         # locale_list  = %w(ca-eng ca-fre us uk)
 
         # Check to see if the build folder exists, kill if it doesn't
-        buildcheck(build_folder)
+        buildcheck('build')
 
         # Change to build > revision > version directory
         Dir.chdir(work_folder)
         # Grab the list of directories depending on the revision
         # and version that was passed to this method, remove assets folder
-        directory_list = Dir.glob('*').select { |fn| File.directory?(fn) }
+        directory_list = page_folders
         directory_list = directory_list.reject { |fn| fn == 'assets' }
 
         # Delete the sitemap file

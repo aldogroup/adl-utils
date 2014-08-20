@@ -6,6 +6,10 @@ require 'expanded_date'
 
 module Middleman
   module Cli
+
+    #
+    # Create Initialize Middleman variables and execute the generator
+    #
     class ScheduledImpex < Thor
       no_commands do
         def mm_config
@@ -18,6 +22,9 @@ module Middleman
       end
     end
 
+    #
+    # Create scheduled impex files.
+    #
     class GenerateScheduled < Thor
       include Thor::Actions
 

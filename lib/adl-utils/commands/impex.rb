@@ -5,6 +5,10 @@ require 'expanded_date'
 
 module Middleman
   module Cli
+
+    #
+    # Initialize Middleman Variable
+    #
     class InitVar
       def upcase_strip(content)
         (content.upcase.gsub(/[^a-zA-Z 0-9]/, '')).gsub(/\s/, '')
@@ -41,6 +45,10 @@ module Middleman
       end
     end
 
+
+    #
+    # Create Impex CLI Script.
+    #
     class Impex < Thor
       include Thor::Actions
 

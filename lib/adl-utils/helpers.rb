@@ -44,7 +44,7 @@ module Middleman
         end
 
         def supprice(text)
-          text.gsub(/[\$\£]/, '<sup>\0</sup>')
+          text.gsub(/[\$£]/, '<sup>\0</sup>')
         end
 
         def convert_class(width)

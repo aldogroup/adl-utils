@@ -6,6 +6,10 @@ require 'expanded_date'
 
 module Middleman
   module Cli
+
+    #
+    # Create Release CLI Script.
+    #
     class Release < Thor
       include Thor::Actions
 

@@ -6,6 +6,10 @@ require 'expanded_date'
 
 module Middleman
   module Cli
+
+    #
+    # Create AkamaiSync CLI Script.
+    #
     class AkamaiSync < Thor
       include Thor::Actions
 

@@ -4,7 +4,10 @@ require 'adl-utils/version'
 
 module Middleman
   module Cli
-    # This class provides a "deploy" command for the middleman CLI.
+
+    #
+    # Create Level 3 impex file.
+    #
     class LevelThree < Thor
       include Thor::Actions
 

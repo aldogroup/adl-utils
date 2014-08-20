@@ -4,6 +4,10 @@ require 'adl-utils/version'
 
 module Middleman
   module Cli
+
+    #
+    # Create the homepage impex file.
+    #
     class HomepageImpex < Thor
       no_commands do
         def mm_config

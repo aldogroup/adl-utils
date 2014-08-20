@@ -6,6 +6,10 @@ require 'expanded_date'
 
 module Middleman
   module Cli
+
+    #
+    # Create Daemon CLI Script.
+    #
     class Daemon < Thor
       include Thor::Actions
 
