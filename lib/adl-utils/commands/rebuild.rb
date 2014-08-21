@@ -105,12 +105,9 @@ module Middleman
         # Grab the list of directories depending on the revision
         # and version that was passed to this method, remove assets folder
         directory_list = page_folders.reject { |fn| fn == 'assets' }
-        # directory_list = directory_list
 
         # Delete the sitemap file
-        if File.exist?('index.html')
-          File.delete('index.html')
-        end
+        File.delete('index.html') if File.exist?('index.html')
 
         # Loop through all locales folders
         directory_list.each do |folder|
