@@ -6,7 +6,6 @@ require 'expanded_date'
 
 module Middleman
   module Cli
-
     #
     # Create AkamaiSync CLI Script.
     #

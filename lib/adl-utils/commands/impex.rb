@@ -5,7 +5,6 @@ require 'expanded_date'
 
 module Middleman
   module Cli
-
     #
     # Initialize Middleman Variable
     #
@@ -44,7 +43,6 @@ module Middleman
         return @mm.config
       end
     end
-
 
     #
     # Create Impex CLI Script.

@@ -5,6 +5,10 @@ require 'expanded_date'
 
 module Middleman
   module Cli
+    #
+    # ReBuild Script.
+    # Cleanly restructure the build folder to make web admins work easier
+    #
     class Rebuild < Thor
       include Thor::Actions
 
@@ -22,8 +26,8 @@ module Middleman
       method_option 'platform', aliases: '-p', type: :string, desc: 'version (icongo or hybris)'
 
       def rebuild
-        build(options)
-        restructure(options)
+        build
+        restructure
       end
 
       protected
@@ -38,7 +42,7 @@ module Middleman
         options['platform'] || ENV['VER']
       end
 
-      def build(_options={})
+      def build
         if yes?('== Do you want to build your project first ?')
           run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
         end
@@ -94,7 +98,7 @@ module Middleman
         Dir.glob('*').select { |fn| File.directory?(fn) }
       end
 
-      def restructure(_options={})
+      def restructure
         puts '== Rebuilding'
 
         # Check to see if the build folder exists, kill if it doesn't

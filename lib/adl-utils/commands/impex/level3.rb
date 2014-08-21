@@ -4,7 +4,6 @@ require 'adl-utils/version'
 
 module Middleman
   module Cli
-
     #
     # Create Level 3 impex file.
     #

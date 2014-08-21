@@ -6,7 +6,6 @@ require 'adl-utils/version'
 
 module Middleman
   module Cli
-
     #
     # Create the confirm impex file.
     #
