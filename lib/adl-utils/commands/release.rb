@@ -27,17 +27,24 @@ module Middleman
       method_option 'platform', aliases: '-p', default: 'icongo', type: :string, desc: 'version (icongo or hybris)'
 
       def release
-        build_before(options)
+        build_before
         process
       end
 
       protected
 
-      def build_before(options={})
-        if options['build_before']
-          # http://forum.middlemanapp.com/t/problem-with-the-build-task-in-an-extension
-          revision  = options['environment']
-          version   = options['platform']
+      def revision
+        rev = options['environment'] || ENV['REV']
+        rev = 'dev' if rev.nil?
+        rev
+      end
+
+      def version
+        options['platform'] || ENV['VER']
+      end
+
+      def build_before
+        if yes?('== Do you want to build your project first ?')
           run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
         end
       end
@@ -45,7 +52,6 @@ module Middleman
       def print_usage_and_die(message)
         usage_path    = File.join(File.dirname(__FILE__), '..', '..', 'USAGE')
         usage_message = File.read(usage_path)
-
         raise Error, "ERROR: #{message}\n#{usage_message}"
       end
 
