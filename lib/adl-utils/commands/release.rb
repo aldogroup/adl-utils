@@ -23,11 +23,12 @@ module Middleman
 
       desc 'release [options]', Middleman::ADLUTILS::RELEASE_DESC
       method_option 'build_before', type: :boolean, aliases: '-b', desc: 'Build before creating the release'
-      method_option 'environment', default: 'dev', aliases: '-e', type: :string, desc: 'Environment (Default: dev)'
-      method_option 'platform', aliases: '-p', default: 'icongo', type: :string, desc: 'version (icongo or hybris)'
+      method_option 'environment', aliases: '-e', type: :string, desc: 'Environment (Default: dev)'
+      method_option 'platform', aliases: '-p', type: :string, desc: 'version (icongo or hybris)'
 
       def release
-        build_before
+        buildtask = Middleman::Cli::BuildBefore.new
+        buildtask.build(revision, version)
         process
       end
 
@@ -43,11 +44,6 @@ module Middleman
         options['platform'] || ENV['VER']
       end
 
-      def build_before
-        if yes?('== Do you want to build your project first ?')
-          run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
-        end
-      end
 
       def print_usage_and_die(message)
         usage_path    = File.join(File.dirname(__FILE__), '..', '..', 'USAGE')

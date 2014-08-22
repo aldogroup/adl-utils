@@ -26,7 +26,8 @@ module Middleman
       method_option 'platform', aliases: '-p', type: :string, desc: 'version (icongo or hybris)'
 
       def rebuild
-        build
+        buildtask = Middleman::Cli::BuildBefore.new
+        buildtask.build(revision, version)
         restructure
       end
 
