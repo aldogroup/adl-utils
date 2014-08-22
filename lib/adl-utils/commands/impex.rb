@@ -59,9 +59,8 @@ module Middleman
       method_option :l3, desc: 'Will generate all the level3 pages. (generate_l3 must be set to true in config.rb)'
 
       def impex
-        if yes?('== Do you want to build your project first ?')
-          run("VER=hybris REV=#{ENV['REV']} middleman build --clean", verbose: false) || exit(1)
-        end
+        buildtask = Middleman::Cli::BuildBefore.new
+        buildtask.build(revision, 'hybris')
 
         if options[:homepage]
           require 'adl-utils/commands/impex/homepage'

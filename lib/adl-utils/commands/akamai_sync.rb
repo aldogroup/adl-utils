@@ -23,22 +23,29 @@ module Middleman
 
       desc 'akamai_sync [options]', Middleman::ADLUTILS::AKAMAI_DESC
       method_option 'build_before', type: :boolean, aliases: '-b', desc: 'Run `middleman build` before the release'
-      method_option 'environment', default: 'dev', aliases: '-e', type: :string, desc: 'Environment (Default: dev)'
-      method_option 'platform', aliases: '-p', default: 'icongo', type: :string, desc: 'version (icongo or hybris)'
+      method_option 'environment', aliases: '-e', type: :string, desc: 'Environment (Default: dev)'
+      method_option 'platform', aliases: '-p', type: :string, desc: 'version (icongo or hybris)'
 
       def akamai_sync
-        build_before(options)
+        build_before
         FtpConfig.process(options)
       end
 
       protected
 
-      def build_before(options={})
-        if yes?('== Do you want to build your project first ?')
-          revision = options['environment']
-          version = options['platform']
-          run("VER=#{version} REV=#{revision} middleman build --clean", verbose: false) || exit(1)
-        end
+      def build_before
+        buildtask = Middleman::Cli::BuildBefore.new
+        buildtask.build(revision, version)
+      end
+
+      def revision
+        rev = options['environment'] || ENV['REV']
+        rev = 'dev' if rev.nil?
+        rev
+      end
+
+      def version
+        options['platform'] || ENV['VER']
       end
 
       class FtpConfig < Middleman::Extension

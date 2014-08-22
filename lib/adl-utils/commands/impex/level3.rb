@@ -45,9 +45,6 @@ module Middleman
             locales: %w(ca_en ca_fr uk_en_UK us_en_US),
             source_root: File.dirname(__FILE__),
             usage_path: File.join(File.dirname(__FILE__), 'impex/data/'),
-            # impex_data_file: impex_yml_file,
-            # impex_data: File.read(impex_yml_file),
-            # impex_pages: YAML.load(File.read(impex_yml_file))
           }
         end
 
@@ -85,7 +82,6 @@ module Middleman
         def generate_l3(locale, _mm_config={})
           @locale = locale
           build_dir = Pathname.new("build/#{impexer_config[:revision]}/hybris/" + locale)
-          # l3_build_dir = build_dir + '/l3'
           # =>  Create an array with all the directories inside the working dir
           l3_content_dir = Dir.glob(build_dir + 'l3/*')
           say("Generating L3 for #{locale}...", :yellow)
