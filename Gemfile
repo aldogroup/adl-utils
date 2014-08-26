@@ -15,6 +15,7 @@ group :test do
   gem 'codeclimate-test-reporter'
   gem 'cucumber'
   gem 'fivemat'
+  gem 'rubocop'
   gem 'aruba'
   gem 'rspec'
   gem 'coveralls', require: false
