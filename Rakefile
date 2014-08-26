@@ -1,3 +1,5 @@
+require 'rubygems' unless defined?(Gem)
+
 require 'codeclimate-test-reporter'
 SimpleCov.command_name 'Unit Tests'
 CodeClimate::TestReporter.start
@@ -11,9 +13,15 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
   t.cucumber_opts = "--color --tags ~@wip --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 
-require 'rubocop/rake_task'
+# require 'rubocop/rake_task'
 
-Rubocop::RakeTask.new
+# Rubocop::RakeTask.new
+
+require 'rubocop/rake_task'
+desc 'Run RuboCop to check code consistency'
+RuboCop::RakeTask.new(:rubocop) do |task|
+  task.fail_on_error = false
+end
 
 require 'rake/clean'
 
