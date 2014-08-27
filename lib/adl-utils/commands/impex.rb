@@ -60,7 +60,7 @@ module Middleman
 
       def impex
         buildtask = Middleman::Cli::BuildBefore.new
-        buildtask.build(revision, 'hybris')
+        buildtask.build(ENV['REV'], 'hybris')
 
         if options[:homepage]
           require 'adl-utils/commands/impex/homepage'
