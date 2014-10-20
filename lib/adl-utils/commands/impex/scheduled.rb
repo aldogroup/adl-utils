@@ -118,9 +118,9 @@ module Middleman
                   "#{current_sublp_fr.force_encoding('ASCII-8BIT')}"
                 end
               end
-
+              # Would need a check if CATEGORY BANNER or LANDING PAGE for an appropriate semi-colon.
               insert_into_file @impex_content_file, after: apply_restriction_config, verbose: false do
-                "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";;;#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
+                "##{sub_page['page_title']}\n;;\"#{sub_page['hybris_id']}\";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};\n"
               end
 
             end # End of sub_pages generator loop
