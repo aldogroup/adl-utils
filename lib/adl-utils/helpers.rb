@@ -1,5 +1,5 @@
 module Middleman
-  class ADLUTILSHelpers < ADLUTILS
+  class ADLUTILSHelpers < ::Middleman::Extension
     def initialize(app, options_hash={}, &block)
       super
 
