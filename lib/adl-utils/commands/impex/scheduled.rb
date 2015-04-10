@@ -189,7 +189,7 @@ module Middleman
         end
 
         def product_catalog
-          if config[:brand] == 'ALDO-SHOES'
+          if mm_config[:brand] == 'ALDO-SHOES'
             return mm_config[:country_code]+ 'AldoProductCatalog'
           elsif config[:brand] == 'Call-it-Spring'
             return mm_config[:country_code]+ 'CISProductCatalog'
