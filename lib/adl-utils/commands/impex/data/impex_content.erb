@@ -1,6 +1,15 @@
 ### Hybris Header
 
-$contentCatalog=aldoCommerceContentCatalog
+<% if config[:brand] == 'ALDO-SHOES' %>
+    $contentCatalog=aldoCommerceContentCatalog
+<% elsif config[:brand] == 'Call-it-Spring' %>
+    $contentCatalog=cisCommerceContentCatalog
+<% elsif config[:brand] == 'Globo-Shoes' %>
+    $contentCatalog=globoCommerceContentCatalog
+<% else  %>
+    $contentCatalog=lbCommerceContentCatalog
+<% end %>
+
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $picture=media(code, $contentCV);
 $siteResource=jar:com.aldo.hybris.initialdata.setup.InitialDataSystemSetup&/aldoinitialdata/import/contentCatalogs/$contentCatalog

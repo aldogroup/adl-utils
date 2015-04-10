@@ -188,6 +188,18 @@ module Middleman
           impexify_content(File.read(content_fr))
         end
 
+        def product_catalog
+          if config[:brand] == 'ALDO-SHOES'
+            return mm_config[:country_code]+ 'AldoProductCatalog'
+          elsif config[:brand] == 'Call-it-Spring'
+            return mm_config[:country_code]+ 'CISProductCatalog'
+          elsif config[:brand] == 'Globo-Shoes'
+            return mm_config[:country_code]+ 'GloboProductCatalog'
+          else
+            return mm_config[:country_code]+ 'LBProductCatalog'
+          end
+        end
+
         # Still Works needs to be done here (Method is too long)
         def generate_content(locale)
           say("\n\n Generating impex content files for #{country_code}", :blue)
@@ -204,7 +216,7 @@ module Middleman
             content_fr_page = page_fr(content_fr)
 
             append_to_file @impex_content_file, verbose: false do
-              "# Landing Pages & Category Banner\n$lang=#{mm_config[:lang]}\n$productCatalog=#{mm_config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
+              "# Landing Pages & Category Banner\n$lang=#{mm_config[:lang]}\n$productCatalog=#{product_catalog}\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
             end
 
             # Generate the rest of the content

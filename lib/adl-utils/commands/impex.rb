@@ -26,6 +26,7 @@ module Middleman
         mm_instance
 
         @config = {
+          brand: @mm.config.banner,
           season: @mm.config.season,
           campaign: @mm.config.campaign,
           week: upcase_strip(@mm.config.campaign),

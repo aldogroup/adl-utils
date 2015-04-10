@@ -14,6 +14,18 @@ module Middleman
 
       no_commands do
 
+        def product_catalog
+          if @config[:brand] == 'ALDO-SHOES'
+            return @config[:country_code]+ 'AldoProductCatalog'
+          elsif @config[:brand] == 'Call-it-Spring'
+            return @config[:country_code]+ 'CISProductCatalog'
+          elsif @config[:brand] == 'Globo-Shoes'
+            return @config[:country_code]+ 'GloboProductCatalog'
+          else
+            return @config[:country_code]+ 'LBProductCatalog'
+          end
+        end
+
         def confirm_generate(config={}, locale, impex_file)
           @finished = false
           build_dir = Pathname.new("build/#{config[:revision]}/hybris/" + locale)
@@ -23,7 +35,7 @@ module Middleman
 
           # =>  Read page and get content
           append_to_file @confirm_file, verbose: false do
-            "# Landing Pages & Category Banner\n$lang=#{config[:lang]}\n$productCatalog=#{config[:country_code]}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n"
+            "# Landing Pages & Category Banner\n$lang=#{config[:lang]}\n$productCatalog=#{product_catalog}\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)\n"
           end
           append_to_file(@confirm_file, "#end content\n", verbose: false)
 
