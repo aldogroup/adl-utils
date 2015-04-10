@@ -50,11 +50,11 @@ module Middleman
         end
 
         def head_content(dir)
-          impexify_content(File.read(File.join(dir, '/head.html')))
+          impexify_content(File.read(File.join(dir, '/head/index.html')))
         end
 
         def footer_content(dir)
-          impexify_content(File.read(File.join(dir, '/footer.html')))
+          impexify_content(File.read(File.join(dir, '/footer/index.html')))
         end
 
         def content_page
