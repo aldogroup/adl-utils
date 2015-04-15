@@ -61,6 +61,7 @@ module Middleman
 
       def impex
         buildtask = Middleman::Cli::BuildBefore.new
+        ENV['REV'] = 'dev' if ENV['REV'].nil?
         buildtask.build(ENV['REV'], 'hybris')
 
         if options[:homepage]

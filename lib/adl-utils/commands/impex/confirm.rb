@@ -71,7 +71,9 @@ module Middleman
         end
 
         def landing_page_impex(file_destination, page={}, content)
-          if content.include?('ca_fr')
+          if content.include?('ca_en')
+            content_fr = fr_swap(content)
+            content_fr_page = page_fr(content_fr)
             insert_into_file file_destination, after: "#ca_fr\n", verbose: false do
               "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
             end
@@ -83,7 +85,7 @@ module Middleman
         end
 
         def category_banner_impex(file_destination, page={}, content)
-          if content.include?('ca_fr')
+          if content.include?('ca_en')
             insert_into_file file_destination, after: "#ca_fr\n", verbose: false do
               "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
             end

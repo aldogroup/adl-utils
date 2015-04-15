@@ -50,11 +50,19 @@ module Middleman
         end
 
         def head_content(dir)
-          impexify_content(File.read(File.join(dir, '/head/index.html')))
+          if File.file?(File.join(dir, '/head/index.html'))
+            impexify_content(File.read(File.join(dir, '/head/index.html')))
+          else
+            impexify_content(File.read(File.join(dir, '/head.html')))
+          end
         end
 
         def footer_content(dir)
-          impexify_content(File.read(File.join(dir, '/footer/index.html')))
+          if File.file?(File.join(dir, '/footer/index.html'))
+            impexify_content(File.read(File.join(dir, '/footer/index.html')))
+          else
+            impexify_content(File.read(File.join(dir, '/footer.html')))
+          end
         end
 
         def content_page
@@ -103,7 +111,7 @@ module Middleman
           @campaign = mm_config[:campaign]
           output_file = "#{output_dir}/#{gentime}_#{@campaign}_config.impex"
           say("\n══ Generating impex config file", :green)
-          copy_file(File.join(@template_dir + 'impex_config.tt'), output_file)
+          copy_file(File.join(@template_dir + 'impex_config.erb'), output_file)
           mm_config[:hybris_locales].each do |loc|
             next if loc.to_s == 'ca_fr'
             content_var(mm_config, loc)
