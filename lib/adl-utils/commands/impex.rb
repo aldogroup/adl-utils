@@ -24,17 +24,17 @@ module Middleman
       # define project variable
       def project_config
         mm_instance
-
+        # binding.pry
         @config = {
           brand: @mm.config.banner,
           season: @mm.config.season,
           campaign: @mm.config.campaign,
           week: upcase_strip(@mm.config.campaign),
-          campaign_start: @mm.config.campaign_start,
           locales: @mm.config[:hybris_locales],
           revision: @mm.revision,
           source_root: @mm.root,
-          impex_data: @mm.data.impex_data,
+          campaign_start: @mm.data.deploy_config.campaign_start,
+          impex_data: @mm.data.deploy_config.pages,
           generate_l3: @mm.config.generate_l3
         }
       end

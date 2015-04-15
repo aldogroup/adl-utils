@@ -65,18 +65,19 @@ module Middleman
           impex_property = Hash.new
           if locale == 'ca_en'
             impex_property[:country_code] = 'ca'
-            impex_property[:date_hour] = "#{mm_campaign_start['ca'][0]} #{mm_campaign_start['ca'][1]}"
+            # binding.pry
+            impex_property[:date_hour] = "#{mm_campaign_start.ca.date} #{mm_campaign_start.ca.time}"
             impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
             impex_property[:lang] = 'en'
           elsif locale == 'uk_en_UK'
             impex_property[:lang] = 'en_UK'
             impex_property[:country_code] = 'uk'
-            impex_property[:date_hour] = "#{mm_campaign_start['uk'][0]} #{mm_campaign_start['uk'][1]}"
+            impex_property[:date_hour] = "#{mm_campaign_start.uk.date} #{mm_campaign_start.uk.time}"
             impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
           elsif locale == 'us_en_US'
             impex_property[:lang] = 'en_US'
             impex_property[:country_code] = 'us'
-            impex_property[:date_hour] = "#{mm_campaign_start['us'][0]} #{mm_campaign_start['us'][1]}"
+            impex_property[:date_hour] = "#{mm_campaign_start.us.date} #{mm_campaign_start.us.time}"
             impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
           end
 
