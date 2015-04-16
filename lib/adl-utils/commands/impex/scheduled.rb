@@ -58,7 +58,55 @@ module Middleman
         end
 
         def mm_campaign_start
+          # binding.pry
           mm_config[:campaign_start]
+        end
+
+        def schedule_fetch(page, period, locale)
+          # scheduled_day = mm_config[ref][period][locale].date
+          # scheduled_hour = mm_config[ref][period][locale].time
+          # page_schedule =  date_parse(scheduled_day.join(scheduled_hour))
+         begin
+           locale = locale_converter(locale)
+           scheduled = 'schedule_' + period
+           # puts page[scheduled]
+           if page[scheduled] == 'auto' && period == 'start'
+             page_schedule =  date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}")
+             return page_schedule
+           elsif page[scheduled] == 'auto' && period == 'end'
+            page_schedule = campaign_scheduled_end(date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"))
+            return page_schedule
+           else
+            ref = page[scheduled.to_s].to_sym
+            page_schedule = date_parse("#{mm_config[ref][period][locale].date} #{mm_config[ref][period][locale].time}")
+            return page_schedule
+           end
+
+         rescue
+           if period == 'start'
+            page_schedule =  date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}")
+           else
+             page_schedule = campaign_scheduled_end(date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"))
+           end
+           return page_schedule
+           # puts "Defaulted to: #{page_schedule}"
+           # binding.pry
+         end
+          # binding.pry
+          # mm_config[:campaign_start]
+         # puts page_schedule
+
+        end
+
+        def locale_converter(locale)
+          case locale
+            when 'ca_en', 'ca_fr'
+              return 'ca'
+            when 'us_en_US'
+              return 'us'
+            else 'uk_en_UK'
+              return 'uk'
+          end
         end
 
         def content_var(mm_config={}, locale)
@@ -152,8 +200,8 @@ module Middleman
         end
 
         def generate_header(mm_config={}, locale)
-          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-scheduled-for-#{pretty_golive}_#{country_code}.impex"
-          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-confirm-on-#{pretty_golive_confirm}_#{country_code}.impex"
+          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-scheduled_#{country_code}.impex"
+          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-confirm_#{country_code}.impex"
 
           create_file @impex_content_file, verbose: false
           create_file confirm_impex_file, verbose: false
@@ -215,6 +263,8 @@ module Middleman
             content_page = File.read(content)
             content_fr = fr_swap(content)
             content_fr_page = page_fr(content_fr)
+            start_date = schedule_fetch(impex_page, 'start', locale)
+            end_date = schedule_fetch(impex_page, 'end', locale)
 
             append_to_file @impex_content_file, verbose: false do
               "# Landing Pages & Category Banner\n$lang=#{mm_config[:lang]}\n$productCatalog=#{product_catalog}\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
@@ -236,14 +286,14 @@ module Middleman
             end
 
             unless mm_config[:country_code].include?('ca')
-              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\"\n"
+              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{start_date};#{end_date};\"#{impexify_content(content_page)}\"\n"
               insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end
             end
 
             if content.include?('ca_en')
-              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{impexify_content(content_page)}\";\"#{content_fr_page}\"\n"
+              page_content = ";#{impex_page['page_title']}#{mm_config[:week]};<ignore>;;#{impex_page['type']};#{start_date};#{end_date};\"#{impexify_content(content_page)}\";\"#{content_fr_page}\"\n"
               insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                 page_content.force_encoding('ASCII-8BIT')
               end

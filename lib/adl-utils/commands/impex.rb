@@ -33,7 +33,9 @@ module Middleman
           locales: @mm.config[:hybris_locales],
           revision: @mm.revision,
           source_root: @mm.root,
-          campaign_start: @mm.data.deploy_config.campaign_start,
+          campaign_start: @mm.data.deploy_config.campaign_schedule,
+          sale_schedule: @mm.data.deploy_config.sale_schedule,
+          clearance_schedule: @mm.data.deploy_config.clearance_schedule,
           impex_data: @mm.data.deploy_config.pages,
           generate_l3: @mm.config.generate_l3
         }
