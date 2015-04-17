@@ -70,23 +70,17 @@ module Middleman
            locale = locale_converter(locale)
            scheduled = 'schedule_' + period
            # puts page[scheduled]
-           if page[scheduled] == 'auto' && period == 'start'
-             page_schedule =  date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}")
-             return page_schedule
-           elsif page[scheduled] == 'auto' && period == 'end'
-            page_schedule = campaign_scheduled_end(date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"))
-            return page_schedule
-           else
             ref = page[scheduled.to_s].to_sym
             page_schedule = date_parse("#{mm_config[ref][period][locale].date} #{mm_config[ref][period][locale].time}")
             return page_schedule
            end
 
-         rescue
+        rescue
+          campaign_schedule = "#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"
            if period == 'start'
-            page_schedule =  date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}")
+            page_schedule =  date_parse(campaign_schedule)
            else
-             page_schedule = campaign_scheduled_end(date_parse("#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"))
+             page_schedule = campaign_scheduled_end(date_parse(campaign_schedule))
            end
            return page_schedule
            # puts "Defaulted to: #{page_schedule}"
@@ -238,7 +232,7 @@ module Middleman
         end
 
         def product_catalog
-          if mm_config[:brand] == 'ALDO-SHOES'
+          if mm_config[:brand] == 'ALDO-SHOES' || mm_config[:brand] == 'Aldo-Shoes'
             return mm_config[:country_code]+ 'AldoProductCatalog'
           elsif mm_config[:brand] == 'Call-it-Spring'
             return mm_config[:country_code]+ 'CISProductCatalog'
