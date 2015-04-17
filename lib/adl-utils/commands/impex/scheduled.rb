@@ -63,9 +63,6 @@ module Middleman
         end
 
         def schedule_fetch(page, period, locale)
-          # scheduled_day = mm_config[ref][period][locale].date
-          # scheduled_hour = mm_config[ref][period][locale].time
-          # page_schedule =  date_parse(scheduled_day.join(scheduled_hour))
          begin
            locale = locale_converter(locale)
            scheduled = 'schedule_' + period
@@ -74,23 +71,15 @@ module Middleman
             page_schedule = date_parse("#{mm_config[ref][period][locale].date} #{mm_config[ref][period][locale].time}")
             return page_schedule
            end
-
-        rescue
-          campaign_schedule = "#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"
-           if period == 'start'
-            page_schedule =  date_parse(campaign_schedule)
-           else
-             page_schedule = campaign_scheduled_end(date_parse(campaign_schedule))
-           end
-           return page_schedule
-           # puts "Defaulted to: #{page_schedule}"
-           # binding.pry
+          rescue
+            campaign_schedule = "#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"
+             if period == 'start'
+              page_schedule =  date_parse(campaign_schedule)
+             else
+               page_schedule = campaign_scheduled_end(date_parse(campaign_schedule))
+             end
+             return page_schedule
          end
-          # binding.pry
-          # mm_config[:campaign_start]
-         # puts page_schedule
-
-        end
 
         def locale_converter(locale)
           case locale
@@ -232,7 +221,7 @@ module Middleman
         end
 
         def product_catalog
-          if mm_config[:brand] == 'ALDO-SHOES' || mm_config[:brand] == 'Aldo-Shoes'
+          if mm_config[:brand] == 'Aldo-Shoes'
             return mm_config[:country_code]+ 'AldoProductCatalog'
           elsif mm_config[:brand] == 'Call-it-Spring'
             return mm_config[:country_code]+ 'CISProductCatalog'
