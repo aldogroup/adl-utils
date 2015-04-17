@@ -63,14 +63,12 @@ module Middleman
         end
 
         def schedule_fetch(page, period, locale)
-         begin
+          begin
            locale = locale_converter(locale)
            scheduled = 'schedule_' + period
-           # puts page[scheduled]
             ref = page[scheduled.to_s].to_sym
             page_schedule = date_parse("#{mm_config[ref][period][locale].date} #{mm_config[ref][period][locale].time}")
-            return page_schedule
-           end
+           return page_schedule
           rescue
             campaign_schedule = "#{mm_config[:campaign_start][locale].date} #{mm_config[:campaign_start][locale].time}"
              if period == 'start'
@@ -79,6 +77,7 @@ module Middleman
                page_schedule = campaign_scheduled_end(date_parse(campaign_schedule))
              end
              return page_schedule
+           end
          end
 
         def locale_converter(locale)
@@ -126,7 +125,7 @@ module Middleman
           restriction_config.join("\n")
         end
 
-        def leveltwo_routine(impex_page, locale)
+        def leveltwo_routine(impex_page, locale, start_date, end_date)
           build_dir = Pathname.new("build/#{mm_config[:revision]}/hybris/" + locale)
 
           if File.exist?(File.join(build_dir.to_s, impex_page['sub_pages'][0]['page_file']))
@@ -138,14 +137,14 @@ module Middleman
               sub_content_fr_page = page_fr(sub_content_fr)
 
               unless mm_config[:country_code].include?('ca')
-                current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\"\n"
+                current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{start_date};#{end_date};\"#{sub_content_page}\"\n"
                 insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                   "#{current_sublp.force_encoding('ASCII-8BIT')}"
                 end
               end
 
               if sub_content.include?('ca_en')
-                current_sublp_fr = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{mm_config[:campaign_start_date]};#{@campaign_end};\"#{sub_content_page}\";\"#{sub_content_fr_page}\"\n"
+                current_sublp_fr = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{start_date};#{end_date};\"#{sub_content_page}\";\"#{sub_content_fr_page}\"\n"
                 insert_into_file @impex_content_file, before: apply_restriction_config, verbose: false do
                   "#{current_sublp_fr.force_encoding('ASCII-8BIT')}"
                 end
@@ -286,7 +285,7 @@ module Middleman
               "##{impex_page['page_title']}\n;;\"#{impex_page['hybris_id']}\";#{impex_page['page_title']}#{mm_config[:week]};\n"
             end
 
-            leveltwo_routine(impex_page, locale) if impex_page.include?('sub_pages') # End of sub_pages conditional check
+            leveltwo_routine(impex_page, locale, start_date, end_date) if impex_page.include?('sub_pages') # End of sub_pages conditional check
 
           end # End of impex_pages loop
 
