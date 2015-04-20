@@ -34,7 +34,7 @@ module Middleman
             locales: mm.config[:hybris_locales],
             revision: mm.revision,
             source_root: mm.root,
-            impex_data: mm.data.impex_data
+            impex_data: mm.data.deploy_config.pages
           }
           generate(@mm_var)
         end
