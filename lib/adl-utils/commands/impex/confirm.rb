@@ -71,45 +71,50 @@ module Middleman
         end
 
         def landing_page_impex(file_destination, page={}, content)
+          # binding.pry
+          content_page = impexify_content(File.read(content))
           if content.include?('ca_fr')
-            insert_into_file file_destination, after: "#ca_fr\n", verbose: false do
-              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
+            insert_into_file file_destination, after: "#ca_fr", verbose: false do
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content_page}\";\"\";\"\"\n"
             end
           else
             insert_into_file file_destination, before: "#end content", verbose: false do
-              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content}\";\"\";\"\"\n"
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";\"#{content_page}\";\"\";\"\"\n"
             end
           end
         end
 
         def category_banner_impex(file_destination, page={}, content)
+          content_page = impexify_content(File.read(content))
           if content.include?('ca_fr')
-            insert_into_file file_destination, after: "#ca_fr\n", verbose: false do
-              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
+            insert_into_file file_destination, after: "#ca_fr", verbose: false do
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content_page}\";\"\"\n"
             end
           else
             insert_into_file file_destination, before: "#end content", verbose: false do
-              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content}\";\"\"\n"
+              "##{page['page_title']}\n;;\"#{page['hybris_id']}\";;\"#{content_page}\";\"\"\n"
             end
           end
         end
 
         def confirm_page_generator(build_dir, confirm_file, page={}, _config={})
           content = File.join(build_dir, page['page_file'])
-          content_page = impexify_content(File.read(content))
+          # content_page = impexify_content(File.read(content))
 
           # Generate the rest of the content
 
           if page['type'] == 'LANDING_PAGE'
-            landing_page_impex(confirm_file, page, content_page)
+            landing_page_impex(confirm_file, page, content)
           else
-            category_banner_impex(confirm_file, page, content_page)
+            category_banner_impex(confirm_file, page, content)
           end
 
           if page.include?('sub_pages')
             sub_pages(build_dir, page, confirm_file)
           end # End of sub_pages conditional check
+
           if content.include?('ca_en')
+            # binding.pry
             build_dir_fr = Pathname.new("build/#{@config[:revision]}/hybris/ca_fr")
             confirm_page_generator_fr(build_dir_fr, @confirm_file, page)
           end
@@ -142,17 +147,17 @@ module Middleman
 
         def confirm_page_generator_fr(build_dir, confirm_file, page={})
           content = File.join(build_dir, page['page_file'])
-          content_page = impexify_content(File.read(content))
 
           # Generate the rest of the content
+          puts build_dir
           insert_into_file confirm_file, after: "#end subs\n", verbose: false do
             "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=fr];categoryBanner[lang=fr];scheduledContent(&Item)\n\n"
           end
 
           if page['type'] == 'LANDING_PAGE'
-            landing_page_impex(confirm_file, page, content_page)
+            landing_page_impex(confirm_file, page, content)
           else
-            category_banner_impex(confirm_file, page, content_page)
+            category_banner_impex(confirm_file, page, content)
           end
 
           if page.include?('sub_pages')
