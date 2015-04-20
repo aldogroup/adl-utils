@@ -84,6 +84,7 @@ module Middleman
         def content_var(mm_config={}, locale)
           impex_property = Hash.new
           config = {
+            brand: mm_config.banner,
             build_dir: mm_config.build_dir,
             season: mm_config.season,
             campaign: mm_config.campaign,
@@ -115,7 +116,9 @@ module Middleman
           @campaign = mm_config[:campaign]
           output_file = "#{output_dir}/#{gentime}_#{@campaign}_config.impex"
           say("\n══ Generating impex config file", :green)
-          copy_file(File.join(@template_dir + 'impex_config.erb'), output_file)
+          # binding.pry
+          template_config_source = File.join(@template_dir, 'impex_config.erb')
+          template(template_config_source, output_file, mm_config[:banner])
           mm_config[:hybris_locales].each do |loc|
             next if loc.to_s == 'ca_fr'
             content_var(mm_config, loc)
