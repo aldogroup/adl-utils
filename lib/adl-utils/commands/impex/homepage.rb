@@ -50,10 +50,14 @@ module Middleman
         end
 
         def head_content(dir)
-          if File.file?(File.join(dir, '/head/index.html'))
-            impexify_content(File.read(File.join(dir, '/head/index.html')))
-          else
-            impexify_content(File.read(File.join(dir, '/head.html')))
+          begin
+            if File.file?(File.join(dir, '/head/index.html'))
+              impexify_content(File.read(File.join(dir, '/head/index.html')))
+            else
+              impexify_content(File.read(File.join(dir, '/head-include.html')))
+            end
+          rescue
+            impexify_content(File.read(File.join(dir, '/head-include.html')))
           end
         end
 
@@ -61,7 +65,7 @@ module Middleman
           if File.file?(File.join(dir, '/footer/index.html'))
             impexify_content(File.read(File.join(dir, '/footer/index.html')))
           else
-            impexify_content(File.read(File.join(dir, '/footer.html')))
+            impexify_content(File.read(File.join(dir, '/footer-include.html')))
           end
         end
 
