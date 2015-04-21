@@ -63,9 +63,15 @@ module Middleman
 
         def footer_content(dir)
           if File.file?(File.join(dir, '/footer/index.html'))
-            impexify_content(File.read(File.join(dir, '/footer/index.html')))
+            impexify_content(File.read(File.join(dir, '/footer-include.html')))
           else
             impexify_content(File.read(File.join(dir, '/footer-include.html')))
+          end
+        end
+
+        def permanent_footer_content(dir)
+          if File.file?(File.join(dir, '/footer/index.html'))
+            File.join(dir, '/footer/index.html')
           end
         end
 
@@ -116,7 +122,6 @@ module Middleman
           @campaign = mm_config[:campaign]
           output_file = "#{output_dir}/#{gentime}_#{@campaign}_config.impex"
           say("\n══ Generating impex config file", :green)
-          # binding.pry
           template_config_source = File.join(@template_dir, 'impex_config.erb')
           template(template_config_source, output_file, mm_config[:banner])
           mm_config[:hybris_locales].each do |loc|
@@ -134,6 +139,8 @@ module Middleman
           opts[:homepage_content] = impexify_content(File.read(homepage_filepath(build_dir)))
           opts[:homepage_content_fr] = page_fr(fr_swap(homepage_filepath(build_dir))) if locale.to_s == 'ca_en'
           opts[:footer_content] = footer_content(build_dir)
+          opts[:permanent_footer_content] = impexify_content(File.read(permanent_footer_content(build_dir)))
+          opts[:permanent_footer_content_fr] = page_fr(fr_swap(permanent_footer_content(build_dir))) if locale.to_s == 'ca_en'
           template(template_source, impex_homepage_file, mm_config.merge(opts))
         end
       end
