@@ -28,6 +28,7 @@ module Middleman
           end
 
           @mm_var = {
+            brand: mm.config.banner,
             season: mm.config.season,
             campaign: mm.config.campaign,
             week: upcase_strip(mm.config.campaign),
@@ -42,24 +43,28 @@ module Middleman
         def impexer_config
           {
             revision: ENV['REV'],
-            locales: %w(ca_en ca_fr uk_en_UK us_en_US),
+            locales: @mm_var[:locales],
             source_root: File.dirname(__FILE__),
             usage_path: File.join(File.dirname(__FILE__), 'impex/data/'),
           }
         end
 
+
+
         def generate(mm_config={})
           mm_config = @mm_var
-          impexer_config[:locales].each do |loc|
+          impexer_config[:locales].each do |l|
+            loc = l.to_s
             @impex_file = "build/impex/#{impexer_config[:revision]}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-level3-#{loc}.impex"
             create_file @impex_file, verbose: false
             if loc == 'ca_en' || loc == 'ca_fr'
-              country_code = 'ca'
+
               if loc == 'ca_en'
                 lang = 'en'
               else
                 lang = 'fr'
               end
+              (product_catalog == 'Aldo-Shoes') ? country_code = '' : country_code = 'ca'
             end
             if loc == 'uk_en_UK'
               lang = 'en_UK'
@@ -69,13 +74,38 @@ module Middleman
               lang = 'en_US'
               country_code = 'us'
             end
+            # country_code = locale_converter(loc)
+            # binding.pry
             append_to_file @impex_file, verbose: false do
-              "$lang=#{lang}\n$productCatalog=#{country_code}AldoProductCatalog\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
+              "$lang=#{lang}\n$productCatalog=#{country_code}#{product_catalog}\n$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]\n"
             end
             append_to_file @impex_file, verbose: false do
               'UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)'
             end
             generate_l3(loc, mm_config)
+          end
+        end
+
+        def locale_converter(locale)
+          case locale
+            when 'ca_en', 'ca_fr'
+              return 'ca'
+            when 'us_en_US'
+              return 'us'
+            else 'uk_en_UK'
+            return 'uk'
+          end
+        end
+
+        def product_catalog
+          if @mm_var[:brand] == 'Aldo-Shoes'
+            return 'AldoProductCatalog'
+          elsif @mm_var[:brand] == 'Call-it-Spring'
+            return 'CISProductCatalog'
+          elsif @mm_var[:brand] == 'Globo-Shoes'
+            return 'GloboProductCatalog'
+          else
+            return 'LBProductCatalog'
           end
         end
 
@@ -86,6 +116,7 @@ module Middleman
           l3_content_dir = Dir.glob(build_dir + 'l3/*')
           say("Generating L3 for #{locale}...", :yellow)
           append_to_file(@impex_file, "\n#L3 Content Page\n", verbose: false)
+          # binding.pry
           l3_content_dir.each do |l3_content|
             l3_hybris_page_name = l3_content.to_s.gsub(/\d{3,}-/, '').gsub(/\-/, ' ').strip
             l3_hybris_id = l3_content.match(/\d{3,}/).to_s
