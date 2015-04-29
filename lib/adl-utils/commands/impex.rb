@@ -60,6 +60,7 @@ module Middleman
       desc 'impex', Middleman::ADLUTILS::IMPEX_DESC
       method_option :homepage, desc: 'Will generate impex for the homepage without time restriction.'
       method_option :l3, desc: 'Will generate all the level3 pages. (generate_l3 must be set to true in config.rb)'
+      method_option :brands, desc: 'Will generate all the brand pages. (generate_brands must be set to true in config.rb)'
 
       def impex
         buildtask = Middleman::Cli::BuildBefore.new
@@ -72,6 +73,9 @@ module Middleman
         elsif options[:l3]
           require 'adl-utils/commands/impex/level3'
           Middleman::Cli::LevelThree.new.l3
+        elsif options[:brands]
+          require 'adl-utils/commands/impex/brands'
+          Middleman::Cli::Brands.new.brands
         else
           require 'adl-utils/commands/impex/scheduled'
           Middleman::Cli::ScheduledImpex.new.shedimpex
