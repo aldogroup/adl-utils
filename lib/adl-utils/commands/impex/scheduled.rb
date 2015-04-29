@@ -58,7 +58,6 @@ module Middleman
         end
 
         def mm_campaign_start
-          # binding.pry
           mm_config[:campaign_start]
         end
 
@@ -95,7 +94,6 @@ module Middleman
           impex_property = Hash.new
           if locale == 'ca_en'
             impex_property[:country_code] = 'ca'
-            # binding.pry
             impex_property[:date_hour] = "#{mm_campaign_start.ca.date} #{mm_campaign_start.ca.time}"
             impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
             impex_property[:lang] = 'en'
@@ -182,8 +180,8 @@ module Middleman
         end
 
         def generate_header(mm_config={}, locale)
-          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-scheduled_#{country_code}.impex"
-          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{mm_config[:campaign]}-confirm_#{country_code}.impex"
+          @impex_content_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{short_brand}-#{country_code.upcase}_LP_SCHEDULE_#{mm_config[:campaign]}.impex"
+          confirm_impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{short_brand}-#{country_code.upcase}_LP_CONFIRM_#{mm_config[:campaign]}.impex"
 
           create_file @impex_content_file, verbose: false
           create_file confirm_impex_file, verbose: false
@@ -219,6 +217,20 @@ module Middleman
           impexify_content(File.read(content_fr))
         end
 
+        def short_brand
+          if mm_config[:brand] == 'Aldo-Shoes'
+            return 'ALDO'
+          elsif mm_config[:brand] == 'Call-it-Spring'
+            return 'CIS'
+          elsif mm_config[:brand] == 'Globo-Shoes'
+            return 'GLOBO'
+          elsif mm_config[:brand] == 'Globo-Shoes'
+            return 'LB'
+          else
+            return 'UNKNOWN'
+          end
+        end
+
         def product_catalog
           if mm_config[:brand] == 'Aldo-Shoes'
             return mm_config[:country_code]+ 'AldoProductCatalog'
@@ -246,6 +258,11 @@ module Middleman
             content_fr = fr_swap(content)
             content_fr_page = page_fr(content_fr)
             start_date = schedule_fetch(impex_page, 'start', locale)
+            # puts start_date
+            # if content.include? 'handbags'
+            #   binding.pry
+            # end
+
             end_date = schedule_fetch(impex_page, 'end', locale)
 
             append_to_file @impex_content_file, verbose: false do

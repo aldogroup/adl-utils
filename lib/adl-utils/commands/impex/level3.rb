@@ -49,13 +49,30 @@ module Middleman
           }
         end
 
+        def short_brand
+          if mm_config[:brand] == 'Aldo-Shoes'
+            return 'ALDO'
+          elsif mm_config[:brand] == 'Call-it-Spring'
+            return 'CIS'
+          elsif mm_config[:brand] == 'Globo-Shoes'
+            return 'GLOBO'
+          elsif mm_config[:brand] == 'Globo-Shoes'
+            return 'LB'
+          else
+            return 'UNKNOWN'
+          end
+        end
 
+        def mm_config
+          return @mm_var
+        end
 
         def generate(mm_config={})
-          mm_config = @mm_var
+          # mm_config = @mm_var
           impexer_config[:locales].each do |l|
             loc = l.to_s
-            @impex_file = "build/impex/#{impexer_config[:revision]}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-level3-#{loc}.impex"
+            # @impex_file = "build/impex/#{impexer_config[:revision]}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-level3-#{loc}.impex"
+            @impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{short_brand}-#{loc.upcase}_L3_#{mm_config[:season]}.impex"
             create_file @impex_file, verbose: false
             if loc == 'ca_en' || loc == 'ca_fr'
 

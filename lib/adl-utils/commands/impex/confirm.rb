@@ -149,7 +149,7 @@ module Middleman
           content = File.join(build_dir, page['page_file'])
 
           # Generate the rest of the content
-          puts build_dir
+          # puts build_dir
           insert_into_file confirm_file, after: "#end subs\n", verbose: false do
             "\nUPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=fr];categoryBanner[lang=fr];scheduledContent(&Item)\n\n"
           end
