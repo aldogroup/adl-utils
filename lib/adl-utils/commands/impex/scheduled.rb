@@ -133,26 +133,20 @@ module Middleman
               sub_content_page = impexify_content(File.read(sub_content))
               sub_content_fr = fr_swap(sub_content)
               sub_content_fr_page = page_fr(sub_content_fr)
-              default_date = mm_config[:campaign_start][country_code].date
-              default_time = mm_config[:campaign_start][country_code].time
-              default_start_schedule = date_parse("#{default_date} #{default_time}")
-              # sub_page_end_date = schedule_fetch(sub_page, 'end', locale)
-              # sub_page_start_date = schedule_fetch(sub_page, 'start', locale)
-              # binding.pry
-            if sub_page.schedule_start.nil?
-              puts "Sub has it's own schedule"
-              sub_page_start_date = start_date
-            else
-              puts "Sub hasn't it's own schedule"
-              sub_page_start_date = schedule_fetch(sub_page, 'start', locale)
-            end
-            # binding.pry
-            if sub_page.schedule_end.nil?
-              sub_page_end_date = end_date
-            else
-              sub_page_end_date = schedule_fetch(sub_page, 'end', locale)
-            end
 
+              if sub_page.schedule_start.nil?
+                puts "Sub has it's own schedule"
+                sub_page_start_date = start_date
+              else
+                puts "Sub hasn't it's own schedule"
+                sub_page_start_date = schedule_fetch(sub_page, 'start', locale)
+              end
+
+              if sub_page.schedule_end.nil?
+                sub_page_end_date = end_date
+              else
+                sub_page_end_date = schedule_fetch(sub_page, 'end', locale)
+              end
 
               unless mm_config[:country_code].include?('ca')
                 current_sublp = ";#{sub_page['page_title'].capitalize.gsub(' ', '')}#{mm_config[:week]};<ignore>;;#{sub_page['type']};#{sub_page_start_date};#{sub_page_end_date};\"#{sub_content_page}\"\n"
