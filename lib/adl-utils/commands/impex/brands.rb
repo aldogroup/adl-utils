@@ -5,13 +5,13 @@ require 'adl-utils/version'
 module Middleman
   module Cli
     #
-    # Create Level 3 impex file.
+    # Create Brands impex file.
     #
-    class LevelThree < Thor
+    class Brands < Thor
       include Thor::Actions
 
       no_commands do
-        def l3
+        def brands
           project_config
         end
 
@@ -71,8 +71,8 @@ module Middleman
           # mm_config = @mm_var
           impexer_config[:locales].each do |l|
             loc = l.to_s
-            # @impex_file = "build/impex/#{impexer_config[:revision]}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-level3-#{loc}.impex"
-            @impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{short_brand}-#{loc.upcase}_L3_#{mm_config[:season]}.impex"
+            # @impex_file = "build/impex/#{impexer_config[:revision]}/#{Time.now.strftime('%y%m%d-%H%M')}_#{mm_config[:campaign]}-levebrands-#{loc}.impex"
+            @impex_file = "build/impex/#{ENV['REV']}/#{Time.now.strftime('%y-%m-%d_%H.%M')}_#{short_brand}-#{loc.upcase}_BRANDS_#{mm_config[:season]}.impex"
             create_file @impex_file, verbose: false
             if loc == 'ca_en' || loc == 'ca_fr'
 
@@ -99,7 +99,7 @@ module Middleman
             append_to_file @impex_file, verbose: false do
               'UPDATE Category;$catalogVersion;code[unique=true];landingPage[lang=$lang];categoryBanner[lang=$lang];scheduledContent(&Item)'
             end
-            generate_l3(loc, mm_config)
+            generate_brands(loc, mm_config)
           end
         end
 
@@ -126,20 +126,20 @@ module Middleman
           end
         end
 
-        def generate_l3(locale, _mm_config={})
+        def generate_brands(locale, _mm_config={})
           @locale = locale
           build_dir = Pathname.new("build/#{impexer_config[:revision]}/hybris/" + locale)
           # =>  Create an array with all the directories inside the working dir
-          l3_content_dir = Dir.glob(build_dir + 'l3/*')
+          brands_content_dir = Dir.glob(build_dir + 'brands/*')
           say("Generating L3 for #{locale}...", :yellow)
           append_to_file(@impex_file, "\n#L3 Content Page\n", verbose: false)
           # binding.pry
-          l3_content_dir.each do |l3_content|
-            l3_hybris_page_name = l3_content.to_s.gsub(/\d{3,}-/, '').gsub(/\-/, ' ').strip
-            l3_hybris_id = l3_content.match(/\d{3,}/).to_s
-            unless l3_hybris_id.empty?
-              l3_content_page = File.read("#{l3_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
-              append_to_file(@impex_file, "##{l3_hybris_page_name}\n;;#{l3_hybris_id};;\"#{l3_content_page}\";\"\"\n", verbose: false)
+          brands_content_dir.each do |brands_content|
+            brands_hybris_page_name = brands_content.to_s.gsub(/\d{3,}-/, '').gsub(/\-/, ' ').strip
+            brands_hybris_id = brands_content.match(/\d{3,}/).to_s
+            unless brands_hybris_id.empty?
+              brands_content_page = File.read("#{brands_content}/index.html").gsub(' "', '"').gsub('"', '""').force_encoding('ASCII-8BIT')
+              append_to_file(@impex_file, "##{brands_hybris_page_name}\n;;#{brands_hybris_id};;\"#{brands_content_page}\";\"\"\n", verbose: false)
             end
           end
           say("\s\s Finished to generate the impex content files for #{locale}", :green)
