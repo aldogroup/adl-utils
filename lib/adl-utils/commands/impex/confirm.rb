@@ -15,7 +15,7 @@ module Middleman
       no_commands do
 
         def product_catalog
-          if @config[:brand] == 'Aldo-Shoes'
+          if @config[:brand] == 'Aldo-Shoes' || @config[:brand] == 'ALDO-SHOES'
             return @config[:country_code]+ 'AldoProductCatalog'
           elsif @config[:brand] == 'Call-it-Spring'
             return @config[:country_code]+ 'CISProductCatalog'
