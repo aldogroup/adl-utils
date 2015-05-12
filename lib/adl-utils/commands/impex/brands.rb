@@ -56,7 +56,7 @@ module Middleman
             return 'CIS'
           elsif mm_config[:brand] == 'Globo-Shoes'
             return 'GLOBO'
-          elsif mm_config[:brand] == 'Globo-Shoes'
+          elsif mm_config[:brand] == 'Little-Burgundy-Shoes'
             return 'LB'
           else
             return 'UNKNOWN'
