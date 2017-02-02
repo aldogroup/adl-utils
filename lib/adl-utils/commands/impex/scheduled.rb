@@ -106,7 +106,12 @@ module Middleman
             impex_property[:lang] = 'en_US'
             impex_property[:country_code] = 'us'
             impex_property[:date_hour] = "#{mm_campaign_start.us.date} #{mm_campaign_start.us.time}"
+            impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])            
+          else
+            impex_property[:country_code] = 'agi'
+            impex_property[:date_hour] = "#{mm_campaign_start.ca.date} #{mm_campaign_start.ca.time}"
             impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
+            impex_property[:lang] = 'en'
           end
 
           mm_config = mm_config.merge!(impex_property)
