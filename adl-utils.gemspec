@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('middleman-core', ['~> 3.0'])
 
   # Additional dependencies
-  s.add_dependency('thor', ['>= 0.15.2', '< 2.0'])
+  s.add_dependency('thor', ['>= 0.15.2', '< 0.20.0'])
   s.add_dependency 'net-ftp-list', '>= 2.1.1'
   s.add_dependency 'god', '>=0.13.4'
   s.add_dependency 'expanded_date', '>=0.2.1'
