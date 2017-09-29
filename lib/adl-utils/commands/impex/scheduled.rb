@@ -254,7 +254,7 @@ module Middleman
           if mm_config[:brand] == 'Aldo-Shoes'
             return mm_config[:country_code]+ 'AldoProductCatalog'
           elsif mm_config[:brand] == 'Call-it-Spring'
-            return mm_config[:country_code]+ 'CISProductCatalog'
+            return mm_config[:country_code]+ 'CISSapFmsProductCatalog'
           elsif mm_config[:brand] == 'Globo-Shoes'
             return mm_config[:country_code]+ 'GloboProductCatalog'
           else

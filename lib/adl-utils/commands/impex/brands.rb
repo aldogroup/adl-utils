@@ -118,7 +118,7 @@ module Middleman
           if @mm_var[:brand] == 'Aldo-Shoes'
             return 'AldoProductCatalog'
           elsif @mm_var[:brand] == 'Call-it-Spring'
-            return 'CISProductCatalog'
+            return 'CISSapFmsProductCatalog'
           elsif @mm_var[:brand] == 'Globo-Shoes'
             return 'GloboProductCatalog'
           else
