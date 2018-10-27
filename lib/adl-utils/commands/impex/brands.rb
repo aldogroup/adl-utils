@@ -120,7 +120,7 @@ module Middleman
           elsif @mm_var[:brand] == 'Call-it-Spring'
             return 'CISSapFmsProductCatalog'
           elsif @mm_var[:brand] == 'Globo-Shoes'
-            return 'GloboProductCatalog'
+            return 'GloboSapFmsProductCatalog'
           else
             return 'LBProductCatalog'
           end

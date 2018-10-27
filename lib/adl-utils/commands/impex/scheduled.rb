@@ -106,7 +106,7 @@ module Middleman
             impex_property[:lang] = 'en_US'
             impex_property[:country_code] = 'us'
             impex_property[:date_hour] = "#{mm_campaign_start.us.date} #{mm_campaign_start.us.time}"
-            impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])            
+            impex_property[:campaign_start_date] = date_parse(impex_property[:date_hour])
           else
             impex_property[:country_code] = 'agi'
             impex_property[:date_hour] = "#{mm_campaign_start.ca.date} #{mm_campaign_start.ca.time}"
@@ -256,7 +256,7 @@ module Middleman
           elsif mm_config[:brand] == 'Call-it-Spring'
             return mm_config[:country_code]+ 'CISSapFmsProductCatalog'
           elsif mm_config[:brand] == 'Globo-Shoes'
-            return mm_config[:country_code]+ 'GloboProductCatalog'
+            return mm_config[:country_code]+ 'GloboSapFmsProductCatalog'
           else
             return mm_config[:country_code]+ 'LBProductCatalog'
           end

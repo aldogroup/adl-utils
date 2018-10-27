@@ -20,7 +20,7 @@ module Middleman
           elsif @config[:brand] == 'Call-it-Spring'
             return @config[:country_code]+ 'CISSapFmsProductCatalog'
           elsif @config[:brand] == 'Globo-Shoes'
-            return @config[:country_code]+ 'GloboProductCatalog'
+            return @config[:country_code]+ 'GloboSapFmsProductCatalog'
           else
             return @config[:country_code]+ 'LBProductCatalog'
           end
